@@ -30,4 +30,4 @@ Las organizaciones pueden definir el tipo de apoyo por ejemplo:
   * Se requiere voluntarios pero no hay urgencia, ademas se requiere capacitación para completarlo
 
 ### ¿Cómo contribuir?
-Te gustaría __apoyarnos__, por favor revisa nuestra [guía para contribuidores](http://https://github.com/jaloorg/Jalo.Org/blob/master/CONTRIBUTING.md)
+Te gustaría __apoyarnos__, por favor revisa nuestra [guía para contribuidores](https://github.com/jaloorg/Jalo.Org/blob/master/CONTRIBUTING.md)
