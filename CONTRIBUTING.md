@@ -1,6 +1,6 @@
 ## ¿Como contribuir?
 
-Agradecemos el interes por apoyar al proyecto, por lo que agradecería que para hacerlo leas primero la siguiente [guia](http://https://opensource.guide/es/how-to-contribute/)
+Agradecemos el interes por apoyar al proyecto, por lo que agradecería que para hacerlo leas primero la siguiente [guia](https://opensource.guide/es/how-to-contribute/)
 
 Ahora si, estas listo para apoyarnos, el proyecto esta en desarrollo así que __cualquier idea__ es bienvenida.
 
