@@ -28,3 +28,6 @@ Las organizaciones pueden definir el tipo de apoyo por ejemplo:
   * En situaciones donde se requiere apoyo _*indemiado*_ por ejemplo en situaciones de emergencia y el apoyo se necesita de inmediato
 * Voluntarios general
   * Se requiere voluntarios pero no hay urgencia, ademas se requiere capacitación para completarlo
+
+### ¿Cómo contribuir?
+Te gustaría __apoyarnos__, por favor revisa nuestra [guía para contribuidores](http://https://github.com/jaloorg/Jalo.Org/blob/master/CONTRIBUTING.md)
