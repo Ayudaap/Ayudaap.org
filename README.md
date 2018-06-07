@@ -1,5 +1,3 @@
-# JaloAndroid
-
 ## ¿Qué es Jalo.org?
 Es un proyecto que permite gestionar y coordinar de manera eficiente la participación de voluntarios, organizaciones y recursos en un solo lugar con un fin común, ayudar a los que lo necesitan
 
