@@ -1,37 +1,32 @@
-## Welcome to GitHub Pages
+# JaloAndroid
 
-You can use the [editor on GitHub](https://github.com/jaloorg/JaloWeb/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## ¿Qué es Jalo.org?
+Es un proyecto que permite gestionar y coordinar de manera eficiente la participación de voluntarios, organizaciones y recursos en un solo lugar con un fin común, ayudar a los que lo necesitan
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Existen dos dos tipos de usuarios:
 
-### Markdown
+- Voluntarios: 
+  - Personas interesadas en participar en los eventos de la comunidad
+- Organizaciones:
+  - Son normalmente grupos de personas que tienen un fin en comunn
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## ¿Como funciona?
 
-```markdown
-Syntax highlighted code block
+### Voluntarios
+La aplicación permite a los **voluntarios** registrarse al servicio, una vez dentro pueden definir sus preferencias las cuales se utilizan para ofrecer _eventos_ que sean relevantes, por ejemplo:
+* Eventos basados en tu ubicación
+* Eventos de limpieza de rios (Basados en gustos)
+* Etc
 
-# Header 1
-## Header 2
-### Header 3
+### Organizaciones
+Las organizaciones pueden crear eventos y solicitar participantes y especificar las características de la actividad, de esta manera se realiza el _match_ con los usuarios.
 
-- Bulleted
-- List
+Para asegurarse de que la organización sea seria, se le solicitan datos de conntacto con la finalidad de comprobar que sean serias.
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/jaloorg/JaloWeb/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Las organizaciones pueden definir el tipo de apoyo por ejemplo:
+* Voluntarios express
+  * Se utiliza para eventos donde el apoyo se necesita de manera _*urgente*_ por ejemplo en centros de acopio cuando hay mucho trabajo por clasificar y no se requiere capacitación
+* Voluntarios urgentes
+  * En situaciones donde se requiere apoyo _*indemiado*_ por ejemplo en situaciones de emergencia y el apoyo se necesita de inmediato
+* Voluntarios general
+  * Se requiere voluntarios pero no hay urgencia, ademas se requiere capacitación para completarlo
