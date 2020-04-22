@@ -9,7 +9,8 @@ services:
     volumes: 
       - "$PWD:/go/src/Ayudaap.org"
     working_dir: /go/src/Ayudaap.org
-    command: go run main.go
+    command: sudo chmod +x main.go
+    command: ./main.go
     networks: 
       - ayudaap-net
     depends_on:
@@ -23,7 +24,7 @@ services:
     ports: 
       - 27017:27017
     volumes: 
-      - ayudaa-db-vol:/data/db
+      - ayudaap-db-vol:/data/db
     networks: 
       - ayudaap-net
     environment:
@@ -34,4 +35,4 @@ services:
 networks: 
   ayudaap-net:
 volumes: 
-  ayudaa-db-vol:
+  ayudaap-db-vol:
