@@ -19,5 +19,5 @@ func main() {
 	fmt.Printf("Ejecutando desde :%s\n", mensaje)
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
-	log.Fatal(http.ListenAndServe(":8080", router))
+	http.ListenAndServe(":8080", router)
 }
