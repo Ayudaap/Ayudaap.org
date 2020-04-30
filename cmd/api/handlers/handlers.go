@@ -2,25 +2,29 @@ package handlers
 
 import (
 	"net/http"
+	"log"
 
 	"github.com/gorilla/mux"
 )
 
-func home(w http.ResponseWriter,r *http.Request){
-	w.Write([]byte("Hola"))
-}
+// Obtiene el handler principal de la aplicacion
+func GetHandler() http.Handler{
+	r := mux.NewRouter()
+	r.StrictSlash(true)
 
-var router = http.Handler
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Peticion en %v desde %v", r.RequestURI, r.RemoteAddr)
+		w.Write([]byte("Hola desde default"))
+	})
 
-func New() *mux.Router{
+	// TODO: Cambiar la version de API desde configuracion
+	api := r.PathPrefix("/api/v1").Subrouter()
+	api.StrictSlash(true)
 
-	// TODO: Cambiar la forma de genear URL para version de API
-	// router := mux.NewRouter().StrictSlash(true)
-	// router.HandleFunc("/", home)
+	organizacionRouter := new(Organizacion)
+	apiOrg := api.PathPrefix("/organizacion").Subrouter()
+	apiOrg.HandleFunc("/",organizacionRouter.Get).Methods("GET")
+	apiOrg.HandleFunc("/echo",organizacionRouter.echoOrg)
 
-	// return router
-
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/",home)
-	return router
+	return r
 }
