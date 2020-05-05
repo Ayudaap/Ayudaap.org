@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"net/http"
 	"log"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
 // Obtiene el handler principal de la aplicacion
-func GetHandler() http.Handler{
+func GetHandler() http.Handler {
 	r := mux.NewRouter()
 	r.StrictSlash(true)
 
@@ -21,10 +21,10 @@ func GetHandler() http.Handler{
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.StrictSlash(true)
 
-	organizacionRouter := new(Organizacion)
+	organizacionRouter := new(OrganizacionController)
 	apiOrg := api.PathPrefix("/organizacion").Subrouter()
-	apiOrg.HandleFunc("/",organizacionRouter.Get).Methods("GET")
-	apiOrg.HandleFunc("/echo",organizacionRouter.echoOrg)
+	apiOrg.HandleFunc("/", organizacionRouter.Get).Methods("GET")
+	apiOrg.HandleFunc("/echo", organizacionRouter.echoOrg)
 
 	return r
 }
