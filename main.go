@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	app "Ayudaap.org/pkg/common"
+	app "Ayudaap.org/common"
 )
 
 func main() {
