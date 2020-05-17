@@ -21,10 +21,8 @@ func GetHandler() http.Handler {
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.StrictSlash(true)
 
-	organizacionRouter := new(OrganizacionController)
 	apiOrg := api.PathPrefix("/organizacion").Subrouter()
-	apiOrg.HandleFunc("/", organizacionRouter.Get).Methods("GET")
-	apiOrg.HandleFunc("/echo", organizacionRouter.echoOrg)
+	apiOrg.HandleFunc("/", GetALlOrganizaciones).Methods("GET").Name("getAllOrganizaciones")
 
 	return r
 }
