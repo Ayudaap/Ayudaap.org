@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	"Ayudaap.org/cmd/api/handlers"
+	"Ayudaap.org/cmd/api/routes"
 )
 
 type api struct {
@@ -21,7 +21,7 @@ type server interface {
 func New() server {
 	a := &api{}
 
-	r := handlers.GetHandler()
+	r := routes.GetHandler()
 	a.router = r
 	//TODO: Implementar extraccion por medio de archivo de configuracion
 	a.puerto = 8081
