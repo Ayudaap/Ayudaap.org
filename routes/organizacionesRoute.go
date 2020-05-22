@@ -16,7 +16,8 @@ import (
 
 var organizaciones []models.Organizacion
 
-func init() {
+// Inicializa la lista de organizaciones
+func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	faker.Locale = locales.En
 	rand.Seed(50)
 	total := rand.Intn(42)
@@ -55,6 +56,25 @@ func init() {
 				ID:                faker.Bitcoin().Address(),
 			})
 		}
+	}
+
+	guardarOrganizacionesInicializer()
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(struct {
+		Mensaje string `json:"mensaje,omitempty"`
+	}{"Ok"})
+}
+
+// Inicializa la base de datos
+func guardarOrganizacionesInicializer() {
+	log.Print("Inicializano base de datos")
+	orgRepo := new(repository.OrganizacionesRepository)
+	insertado := make(chan string)
+
+	for _, org := range organizaciones {
+		go orgRepo.InsertOrganizacion(org, insertado)
 	}
 }
 
