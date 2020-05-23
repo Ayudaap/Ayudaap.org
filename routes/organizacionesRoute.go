@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"net/http"
 
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"syreclabs.com/go/faker"
 	"syreclabs.com/go/faker/locales"
 
@@ -25,10 +27,10 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i <= total; i++ {
 
 		organizaciones = append(organizaciones, models.Organizacion{
-			ID:   faker.Bitcoin().Address(),
+			ID:   uuid.New().String(),
 			Tipo: models.OrganizacionNoGubernamental,
 			Domicilio: models.Direccion{
-				ID:             faker.Bitcoin().Address(),
+				ID:             uuid.New().String(),
 				Calle:          faker.Address().StreetName(),
 				NumeroExterior: faker.Address().BuildingNumber(),
 				CodigoPostal:   faker.Address().Postcode(),
@@ -53,7 +55,7 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 				Nombre:            faker.Name().Name(),
 				Telefono:          faker.PhoneNumber().PhoneNumber(),
 				EsPrincipal:       principal,
-				ID:                faker.Bitcoin().Address(),
+				ID:                uuid.New().String(),
 			})
 		}
 	}
@@ -87,4 +89,16 @@ func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 	resultados := orgRepo.GetAllOrganizaciones()
 
 	json.NewEncoder(w).Encode(resultados)
+}
+
+// Obtiene una organizacion por ID
+func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	id := mux.Vars(r)["id"]
+
+	orgRepo := new(repository.OrganizacionesRepository)
+	resultados := orgRepo.GetOrganizacionById(id)
+
+	json.NewEncoder(w).Encode(resultados)
+
 }

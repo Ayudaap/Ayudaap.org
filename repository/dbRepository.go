@@ -14,6 +14,9 @@ import (
 var MongoCN *mongo.Client
 var once sync.Once
 
+// Nombre de la base de datos
+const DataBase string = "AyudaapDb"
+
 // Inicializa una nueva instancia
 func init() {
 	once.Do(conectarBD)
