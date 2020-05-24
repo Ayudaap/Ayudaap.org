@@ -3,12 +3,11 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"syreclabs.com/go/faker"
 	"syreclabs.com/go/faker/locales"
 
@@ -27,10 +26,10 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i <= total; i++ {
 
 		organizaciones = append(organizaciones, models.Organizacion{
-			ID:   uuid.New().String(),
+			ID:   primitive.NewObjectID(),
 			Tipo: models.OrganizacionNoGubernamental,
 			Domicilio: models.Direccion{
-				ID:             uuid.New().String(),
+				ID:             primitive.NewObjectID(),
 				Calle:          faker.Address().StreetName(),
 				NumeroExterior: faker.Address().BuildingNumber(),
 				CodigoPostal:   faker.Address().Postcode(),
@@ -55,7 +54,7 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 				Nombre:            faker.Name().Name(),
 				Telefono:          faker.PhoneNumber().PhoneNumber(),
 				EsPrincipal:       principal,
-				ID:                uuid.New().String(),
+				ID:                primitive.NewObjectID(),
 			})
 		}
 	}
@@ -63,15 +62,11 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	guardarOrganizacionesInicializer()
 
 	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(struct {
-		Mensaje string `json:"mensaje,omitempty"`
-	}{"Ok"})
+	json.NewEncoder(w).Encode(models.RespuestaGenerica{fmt.Sprintf("Inizializado: %d objetos generados", total)})
 }
 
 // Inicializa la base de datos
 func guardarOrganizacionesInicializer() {
-	log.Print("Inicializano base de datos")
 	orgRepo := new(repository.OrganizacionesRepository)
 	insertado := make(chan string)
 
@@ -82,13 +77,18 @@ func guardarOrganizacionesInicializer() {
 
 // Lista todas las organizaciones
 func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Peticion desde %s\n", r.RequestURI)
 	w.Header().Set("Content-Type", "application/json")
 	// json.NewEncoder(w).Encode(organizaciones)
 	orgRepo := new(repository.OrganizacionesRepository)
+
 	resultados := orgRepo.GetAllOrganizaciones()
 
-	json.NewEncoder(w).Encode(resultados)
+	if len(resultados) <= 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(models.RespuestaGenerica{"No se encontraron datos a mostrar"})
+	} else {
+		json.NewEncoder(w).Encode(resultados)
+	}
 }
 
 // Obtiene una organizacion por ID
@@ -99,6 +99,9 @@ func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	orgRepo := new(repository.OrganizacionesRepository)
 	resultados := orgRepo.GetOrganizacionById(id)
 
-	json.NewEncoder(w).Encode(resultados)
-
+	if resultados == nil {
+		json.NewEncoder(w).Encode(models.RespuestaGenerica{"No se encontraron datos a mostrar"})
+	} else {
+		json.NewEncoder(w).Encode(resultados)
+	}
 }
