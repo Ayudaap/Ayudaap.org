@@ -25,6 +25,7 @@ func GetHandler() http.Handler {
 
 	apiOrg := api.PathPrefix("/organizacion").Subrouter()
 	apiOrg.HandleFunc("/", GetALlOrganizacionesReq).Methods("GET").Name("getAllOrganizaciones")
+	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("crearOrganizaciones")
 	//TODO: Borrarla en productivo
 	apiOrg.HandleFunc("/inicializarDemo", InicializarOrganizaciones).Methods("GET").Name("inicializarOrganizaciones")
 	apiOrg.HandleFunc("/{id}", GetOrganizacionById).Methods("GET").Name("getOrganizacionById")

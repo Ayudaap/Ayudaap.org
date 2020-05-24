@@ -21,13 +21,13 @@ const orgCollection string = "organizaciones"
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
 	var organizaciones []models.Organizacion
 
-	ctx, _ := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
 
 	db := MongoCN.Database(DataBase)
 	col := db.Collection(orgCollection)
 
 	datos, err := col.Find(ctx, bson.D{})
-	defer datos.Close(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,6 +43,7 @@ func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion 
 	return organizaciones
 }
 
+// Obtiene una organizacion por Id
 func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organizacion {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -65,6 +66,7 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion, c chan string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
+	defer close(c)
 
 	db := MongoCN.Database(DataBase)
 	col := db.Collection(orgCollection)
@@ -76,4 +78,5 @@ func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organi
 	}
 	var result string = fmt.Sprint(datos.InsertedID)
 	c <- result
+
 }

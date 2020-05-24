@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -16,6 +17,13 @@ import (
 )
 
 var organizaciones []models.Organizacion
+
+// Modelo de organizaciones
+var orgRepo *repository.OrganizacionesRepository
+
+func init() {
+	orgRepo = new(repository.OrganizacionesRepository)
+}
 
 // Inicializa la lista de organizaciones
 func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +86,6 @@ func guardarOrganizacionesInicializer() {
 // Lista todas las organizaciones
 func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// json.NewEncoder(w).Encode(organizaciones)
-	orgRepo := new(repository.OrganizacionesRepository)
 
 	resultados := orgRepo.GetAllOrganizaciones()
 
@@ -95,8 +101,6 @@ func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
-
-	orgRepo := new(repository.OrganizacionesRepository)
 	resultados := orgRepo.GetOrganizacionById(id)
 
 	if resultados == nil {
@@ -104,4 +108,37 @@ func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	} else {
 		json.NewEncoder(w).Encode(resultados)
 	}
+}
+
+// Crea una nueva organizacion
+func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	defer r.Body.Close()
+
+	var organizacion models.Organizacion
+
+	if err := json.NewDecoder(r.Body).Decode(&organizacion); err != nil {
+		GetError(err, w)
+	}
+
+	organizacion.ID = primitive.NewObjectID()
+	organizacion.Domicilio.ID = primitive.NewObjectID()
+	for _, dir := range organizacion.Domicilio.Directorio {
+		dir.ID = primitive.NewObjectID()
+	}
+
+	organizacionInsertada := make(chan string)
+
+	go orgRepo.InsertOrganizacion(organizacion, organizacionInsertada)
+	idInsertado := <-organizacionInsertada
+
+	if len(idInsertado) <= 0 {
+		err := errors.New("No se pudo insertar el objeto")
+		GetError(err, w)
+	} else {
+		json.NewEncoder(w).Encode(struct {
+			Id string `json:"id,omitempty"`
+		}{idInsertado})
+	}
+
 }
