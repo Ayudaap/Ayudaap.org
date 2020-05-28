@@ -23,9 +23,13 @@ func GetHandler() http.Handler {
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.StrictSlash(true)
 
+	api.HandleFunc("/oID/", GetPrimitiveID).Methods("GET").Name("getOId")
+
 	apiOrg := api.PathPrefix("/organizacion").Subrouter()
+	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("createOrganizaciones")
 	apiOrg.HandleFunc("/", GetALlOrganizacionesReq).Methods("GET").Name("getAllOrganizaciones")
-	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("crearOrganizaciones")
+	apiOrg.HandleFunc("/{id}", DeleteOrganizacion).Methods("DELETE").Name("deleteAllOrganizaciones")
+
 	//TODO: Borrarla en productivo
 	apiOrg.HandleFunc("/inicializarDemo", InicializarOrganizaciones).Methods("GET").Name("inicializarOrganizaciones")
 	apiOrg.HandleFunc("/{id}", GetOrganizacionById).Methods("GET").Name("getOrganizacionById")

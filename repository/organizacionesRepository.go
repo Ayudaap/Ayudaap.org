@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -16,6 +15,42 @@ type OrganizacionesRepository struct{}
 
 // Nombre de la tabla de organizaciones
 const orgCollection string = "organizaciones"
+
+// Inserta una nueva instancia de Organizacion
+func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion, c chan string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	db := MongoCN.Database(DataBase)
+	col := db.Collection(orgCollection)
+
+	resultado, err := col.InsertOne(ctx, organizacion)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ObjectID, _ := resultado.InsertedID.(primitive.ObjectID)
+
+	var result string = ObjectID.Hex()
+	c <- result
+}
+
+// Inserta una nueva instancia de Organizacion
+// `Organizaciones` Arreglo de organizaciones que se insertaran
+func (o *OrganizacionesRepository) InsertOrganizaciones(organizaciones []interface{}, c chan bool) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	db := MongoCN.Database(DataBase)
+	col := db.Collection(orgCollection)
+
+	resultado, err := col.InsertMany(ctx, organizaciones)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c <- len(resultado.InsertedIDs) > 0
+}
 
 // Obtiene todas las organizaciones
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
@@ -51,10 +86,10 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 	db := MongoCN.Database(DataBase)
 	col := db.Collection(orgCollection)
 
-	_id, _ := primitive.ObjectIDFromHex(id)
+	Oid, _ := primitive.ObjectIDFromHex(id)
 
 	var organizacion *models.Organizacion
-	err := col.FindOne(ctx, bson.M{"_id": _id}).Decode(&organizacion)
+	err := col.FindOne(ctx, bson.M{"_id": Oid}).Decode(&organizacion)
 	if err != nil {
 		return nil
 	}
@@ -62,21 +97,28 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 	return organizacion
 }
 
-// Inserta una nueva instancia de Organizacion
-func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion, c chan string) {
+// Elimina una organizacion
+func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	defer close(c)
 
 	db := MongoCN.Database(DataBase)
 	col := db.Collection(orgCollection)
 
-	datos, err := col.InsertOne(ctx, organizacion)
+	oID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		log.Fatal(err)
-		c <- ""
 	}
-	var result string = fmt.Sprint(datos.InsertedID)
-	c <- result
+	filter := bson.M{"_id": oID}
 
+	result, err := col.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if result.DeletedCount <= 0 {
+		return 0, nil
+	}
+
+	return int(result.DeletedCount), nil
 }
