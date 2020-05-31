@@ -70,7 +70,8 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	guardarOrganizacionesInicializer()
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: fmt.Sprintf("Inizializado: %d objetos generados", total)})
+	//json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: fmt.Sprintf("Inizializado: %d objetos generados", total)})
+	w.WriteHeader(http.StatusCreated)
 }
 
 // Inicializa la base de datos
@@ -93,6 +94,7 @@ func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(models.RespuestaGenerica{"No se encontraron datos a mostrar"})
 	} else {
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
 	}
 }
@@ -124,6 +126,7 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 		err := errors.New("No se pudo insertar el objeto")
 		GetError(err, w)
 	} else {
+		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(struct {
 			Id string `json:"id,omitempty"`
 		}{idInsertado})
@@ -139,6 +142,7 @@ func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	if resultados == nil {
 		json.NewEncoder(w).Encode(models.RespuestaGenerica{"No se encontraron datos a mostrar"})
 	} else {
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
 	}
 }
@@ -153,7 +157,33 @@ func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 		GetError(err, w)
 	}
 
-	json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: fmt.Sprintf("Total borrados: %d", resultados)})
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(struct {
+		Procesado int `json:"procesado,omitempty"`
+	}{Procesado: resultados})
+	//json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: fmt.Sprintf("Total borrados: %d", resultados)})
+}
+
+//Actualiza un objeto
+func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	defer r.Body.Close()
+
+	var organizacion models.Organizacion
+
+	if err := json.NewDecoder(r.Body).Decode(&organizacion); err != nil {
+		GetError(err, w)
+	}
+
+	resultados, err := orgRepo.UpdateOrganizacion(&organizacion)
+	if err != nil {
+		GetError(err, w)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(struct {
+		Procesado int64 `json:"procesado,omitempty"`
+	}{Procesado: resultados})
 }
 
 // Obtiene un Id General
@@ -161,6 +191,7 @@ func GetPrimitiveID(w http.ResponseWriter, r *http.Request) {
 	id := primitive.NewObjectID()
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(struct {
 		Id string `json:"id,omitempty"`
 	}{Id: id.Hex()})

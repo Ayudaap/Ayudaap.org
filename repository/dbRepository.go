@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -58,4 +59,16 @@ func ChequeoConnection() int {
 		return 0
 	}
 	return 1
+}
+
+// Obtienene la colecion y el contexto de trabaj
+// `dataBase` Nombre de la base de datos
+// `collection` Nombre de la conexion
+func GetCollection(dataBase string, collection string) (*mongo.Collection, context.Context, context.CancelFunc) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+
+	db := MongoCN.Database(dataBase)
+	col := db.Collection(collection)
+
+	return col, ctx, cancel
 }

@@ -56,11 +56,8 @@ func (o *OrganizacionesRepository) InsertOrganizaciones(organizaciones []interfa
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
 	var organizaciones []models.Organizacion
 
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	col, ctx, cancel := GetCollection(DataBase, orgCollection)
 	defer cancel()
-
-	db := MongoCN.Database(DataBase)
-	col := db.Collection(orgCollection)
 
 	datos, err := col.Find(ctx, bson.D{})
 	if err != nil {
@@ -80,11 +77,8 @@ func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion 
 
 // Obtiene una organizacion por Id
 func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organizacion {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	col, ctx, cancel := GetCollection(DataBase, orgCollection)
 	defer cancel()
-
-	db := MongoCN.Database(DataBase)
-	col := db.Collection(orgCollection)
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
 
@@ -99,11 +93,8 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 
 // Elimina una organizacion
 func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	col, ctx, cancel := GetCollection(DataBase, orgCollection)
 	defer cancel()
-
-	db := MongoCN.Database(DataBase)
-	col := db.Collection(orgCollection)
 
 	oID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -121,4 +112,20 @@ func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
 	}
 
 	return int(result.DeletedCount), nil
+}
+
+// Actualiza una organizacion retornando el total de elementos que se modificaron
+func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organizacion) (int64, error) {
+
+	col, ctx, cancel := GetCollection(DataBase, orgCollection)
+	defer cancel()
+
+	filter := bson.M{"_id": organizacion.ID}
+	update := bson.M{"$set": organizacion}
+
+	result, err := col.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return 0, err
+	}
+	return result.ModifiedCount, nil
 }
