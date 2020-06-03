@@ -70,7 +70,6 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	guardarOrganizacionesInicializer()
 
 	w.Header().Set("Content-Type", "application/json")
-	//json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: fmt.Sprintf("Inizializado: %d objetos generados", total)})
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -155,13 +154,12 @@ func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 	resultados, err := orgRepo.DeleteOrganizacion(id)
 	if err != nil {
 		GetError(err, w)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(struct {
+			Procesado int `json:"procesado,omitempty"`
+		}{Procesado: resultados})
 	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(struct {
-		Procesado int `json:"procesado,omitempty"`
-	}{Procesado: resultados})
-	//json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: fmt.Sprintf("Total borrados: %d", resultados)})
 }
 
 //Actualiza un objeto
@@ -178,12 +176,12 @@ func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 	resultados, err := orgRepo.UpdateOrganizacion(&organizacion)
 	if err != nil {
 		GetError(err, w)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(struct {
+			Procesado int64 `json:"procesado,omitempty"`
+		}{Procesado: resultados})
 	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(struct {
-		Procesado int64 `json:"procesado,omitempty"`
-	}{Procesado: resultados})
 }
 
 // Obtiene un Id General
