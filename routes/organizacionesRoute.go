@@ -44,8 +44,7 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 				Colonia:        faker.Address().City(),
 				Estado:         faker.Address().State(),
 			},
-			Nombre:             faker.Company().Name(),
-			RepresentanteLegal: faker.Name().Name(),
+			Nombre: faker.Company().Name(),
 		})
 
 		rd := faker.RandomInt(1, 7)
@@ -91,7 +90,7 @@ func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 
 	if len(resultados) <= 0 {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(models.RespuestaGenerica{"No se encontraron datos a mostrar"})
+		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
@@ -128,7 +127,7 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(struct {
 			Id string `json:"id,omitempty"`
-		}{idInsertado})
+		}{Id: idInsertado})
 	}
 }
 
@@ -139,7 +138,7 @@ func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	resultados := orgRepo.GetOrganizacionById(id)
 
 	if resultados == nil {
-		json.NewEncoder(w).Encode(models.RespuestaGenerica{"No se encontraron datos a mostrar"})
+		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)

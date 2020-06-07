@@ -1,9 +1,7 @@
 package repository
 
 import (
-	"context"
 	"log"
-	"time"
 
 	"Ayudaap.org/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,15 +12,12 @@ import (
 type OrganizacionesRepository struct{}
 
 // Nombre de la tabla de organizaciones
-const orgCollection string = "organizaciones"
+const organizacionCollection string = "organizaciones"
 
 // Inserta una nueva instancia de Organizacion
 func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion, c chan string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
-
-	db := MongoCN.Database(DataBase)
-	col := db.Collection(orgCollection)
 
 	resultado, err := col.InsertOne(ctx, organizacion)
 	if err != nil {
@@ -38,11 +33,8 @@ func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organi
 // Inserta una nueva instancia de Organizacion
 // `Organizaciones` Arreglo de organizaciones que se insertaran
 func (o *OrganizacionesRepository) InsertOrganizaciones(organizaciones []interface{}, c chan bool) {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
-
-	db := MongoCN.Database(DataBase)
-	col := db.Collection(orgCollection)
 
 	resultado, err := col.InsertMany(ctx, organizaciones)
 	if err != nil {
@@ -56,7 +48,7 @@ func (o *OrganizacionesRepository) InsertOrganizaciones(organizaciones []interfa
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
 	var organizaciones []models.Organizacion
 
-	col, ctx, cancel := GetCollection(DataBase, orgCollection)
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
 
 	datos, err := col.Find(ctx, bson.D{})
@@ -77,7 +69,7 @@ func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion 
 
 // Obtiene una organizacion por Id
 func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organizacion {
-	col, ctx, cancel := GetCollection(DataBase, orgCollection)
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
@@ -93,7 +85,7 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 
 // Elimina una organizacion
 func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
-	col, ctx, cancel := GetCollection(DataBase, orgCollection)
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
 
 	oID, err := primitive.ObjectIDFromHex(id)
@@ -117,7 +109,7 @@ func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
 // Actualiza una organizacion retornando el total de elementos que se modificaron
 func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organizacion) (int64, error) {
 
-	col, ctx, cancel := GetCollection(DataBase, orgCollection)
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
 
 	filter := bson.M{"_id": organizacion.ID}
