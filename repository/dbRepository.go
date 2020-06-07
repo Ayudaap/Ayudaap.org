@@ -31,13 +31,14 @@ func conectarBD() {
 	// user := os.Getenv("DB_USER")
 	// pass := os.Getenv("DB_PASSWORD")
 
-	//var cadenaConexion = fmt.Printf("mongodb+srv://%s:%s@%h:%p",user,pass,host,port)
+	//var cadenaConexion = fmt.Sprintf("mongodb+srv://%s:%s@%s:%s", user, pass, host, port)
 
-	//cadenaConexion := fmt.Sprintf("mongodb://%s:%s", host, port)
+	//cadenaConexion := fmt.Sprintf("mongodb://%s:%s@%s:%s/", user, pass, host, port)
 	cadenaConexion := fmt.Sprintf("mongodb://localhost:27017")
 	clienteOpts := options.Client().ApplyURI(cadenaConexion)
 	cliente, err := mongo.Connect(context.TODO(), clienteOpts)
 
+	fmt.Println("Cadena de conexion", cadenaConexion)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
