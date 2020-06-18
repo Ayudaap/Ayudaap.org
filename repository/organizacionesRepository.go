@@ -2,6 +2,7 @@ package repository
 
 import (
 	"log"
+	"time"
 
 	"Ayudaap.org/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,9 +16,14 @@ type OrganizacionesRepository struct{}
 const organizacionCollection string = "organizaciones"
 
 // Inserta una nueva instancia de Organizacion
-func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion, c chan string) {
+func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion) string {
 	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
 	defer cancel()
+
+	organizacion.Auditoria = models.Auditoria{
+		CreatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
+		UpdatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
+	}
 
 	resultado, err := col.InsertOne(ctx, organizacion)
 	if err != nil {
@@ -27,7 +33,7 @@ func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organi
 	ObjectID, _ := resultado.InsertedID.(primitive.ObjectID)
 
 	var result string = ObjectID.Hex()
-	c <- result
+	return result
 }
 
 // Inserta una nueva instancia de Organizacion
@@ -114,6 +120,9 @@ func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organ
 
 	filter := bson.M{"_id": organizacion.ID}
 	update := bson.M{"$set": organizacion}
+
+	organizacion.Auditoria.CreatedAt = organizacion.Auditoria.CreatedAt
+	organizacion.Auditoria.UpdatedAt = primitive.Timestamp{T: uint32(time.Now().Unix())}
 
 	result, err := col.UpdateOne(ctx, filter, update)
 	if err != nil {

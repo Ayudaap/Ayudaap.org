@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -44,6 +45,10 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 				Colonia:        faker.Address().City(),
 				Estado:         faker.Address().State(),
 			},
+			Auditoria: models.Auditoria{
+				CreatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
+				UpdatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
+			},
 			Nombre: faker.Company().Name(),
 		})
 
@@ -75,10 +80,9 @@ func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
 // Inicializa la base de datos
 func guardarOrganizacionesInicializer() {
 	orgRepo := new(repository.OrganizacionesRepository)
-	insertado := make(chan string)
 
 	for _, org := range organizaciones {
-		go orgRepo.InsertOrganizacion(org, insertado)
+		orgRepo.InsertOrganizacion(org)
 	}
 }
 
@@ -117,8 +121,7 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	organizacionInsertada := make(chan string)
 	defer close(organizacionInsertada)
 
-	go orgRepo.InsertOrganizacion(organizacion, organizacionInsertada)
-	idInsertado := <-organizacionInsertada
+	idInsertado := orgRepo.InsertOrganizacion(organizacion)
 
 	if len(idInsertado) <= 0 {
 		err := errors.New("No se pudo insertar el objeto")
