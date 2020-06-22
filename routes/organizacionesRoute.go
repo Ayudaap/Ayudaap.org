@@ -3,15 +3,10 @@ package routes
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"math/rand"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"syreclabs.com/go/faker"
-	"syreclabs.com/go/faker/locales"
 
 	"Ayudaap.org/models"
 	"Ayudaap.org/repository"
@@ -24,66 +19,6 @@ var orgRepo *repository.OrganizacionesRepository
 
 func init() {
 	orgRepo = new(repository.OrganizacionesRepository)
-}
-
-// Inicializa la lista de organizaciones
-func InicializarOrganizaciones(w http.ResponseWriter, r *http.Request) {
-	faker.Locale = locales.En
-	rand.Seed(50)
-	total := rand.Intn(42)
-
-	for i := 0; i <= total; i++ {
-
-		organizaciones = append(organizaciones, models.Organizacion{
-			ID:   primitive.NewObjectID(),
-			Tipo: models.OrganizacionNoGubernamental,
-			Domicilio: models.Direccion{
-				ID:             primitive.NewObjectID(),
-				Calle:          faker.Address().StreetName(),
-				NumeroExterior: faker.Address().BuildingNumber(),
-				CodigoPostal:   faker.Address().Postcode(),
-				Colonia:        faker.Address().City(),
-				Estado:         faker.Address().State(),
-			},
-			Auditoria: models.Auditoria{
-				CreatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
-				UpdatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
-			},
-			Nombre: faker.Company().Name(),
-		})
-
-		rd := faker.RandomInt(1, 7)
-		for j := 0; j <= rd; j++ {
-			rndVal := faker.RandomInt(0, 1)
-			var principal bool = false
-			if rndVal == 1 {
-				principal = true
-			}
-
-			organizaciones[i].Domicilio.Directorio = append(organizaciones[i].Domicilio.Directorio, models.Directorio{
-				Alias:             fmt.Sprintf("%s %s", faker.Name().Prefix(), faker.Name().LastName()),
-				CorreoElectronico: faker.Internet().Email(),
-				Nombre:            faker.Name().Name(),
-				Telefono:          faker.PhoneNumber().PhoneNumber(),
-				EsPrincipal:       principal,
-				ID:                primitive.NewObjectID(),
-			})
-		}
-	}
-
-	guardarOrganizacionesInicializer()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-}
-
-// Inicializa la base de datos
-func guardarOrganizacionesInicializer() {
-	orgRepo := new(repository.OrganizacionesRepository)
-
-	for _, org := range organizaciones {
-		orgRepo.InsertOrganizacion(org)
-	}
 }
 
 // Lista todas las organizaciones
@@ -184,15 +119,4 @@ func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 			Procesado int64 `json:"procesado,omitempty"`
 		}{Procesado: resultados})
 	}
-}
-
-// Obtiene un Id General
-func GetPrimitiveID(w http.ResponseWriter, r *http.Request) {
-	id := primitive.NewObjectID()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(struct {
-		Id string `json:"id,omitempty"`
-	}{Id: id.Hex()})
 }

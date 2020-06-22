@@ -7,6 +7,7 @@ import (
 
 	"Ayudaap.org/models"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Obtiene el handler principal de la aplicacion
@@ -26,8 +27,6 @@ func GetHandler() http.Handler {
 	api.HandleFunc("/oID/", GetPrimitiveID).Methods("GET").Name("getOId")
 
 	apiOrg := api.PathPrefix("/organizacion").Subrouter()
-	//TODO: Borrarla en productivo
-	apiOrg.HandleFunc("/inicializarDemo", InicializarOrganizaciones).Methods("GET").Name("inicializarOrganizaciones")
 	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("crearOrganizacion")
 	apiOrg.HandleFunc("/", GetALlOrganizacionesReq).Methods("GET").Name("obtenerOrganizaciones")
 	apiOrg.HandleFunc("/", UpsertOrganizacion).Methods("PUT").Name("modificarOrganizacion")
@@ -51,4 +50,15 @@ func GetError(err error, w http.ResponseWriter) {
 
 	w.WriteHeader(response.StatusCode)
 	w.Write(message)
+}
+
+// Obtiene un Id General
+func GetPrimitiveID(w http.ResponseWriter, r *http.Request) {
+	id := primitive.NewObjectID()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(struct {
+		Id string `json:"id,omitempty"`
+	}{Id: id.Hex()})
 }

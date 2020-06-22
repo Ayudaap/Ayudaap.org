@@ -36,20 +36,6 @@ func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organi
 	return result
 }
 
-// Inserta una nueva instancia de Organizacion
-// `Organizaciones` Arreglo de organizaciones que se insertaran
-func (o *OrganizacionesRepository) InsertOrganizaciones(organizaciones []interface{}, c chan bool) {
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
-	defer cancel()
-
-	resultado, err := col.InsertMany(ctx, organizaciones)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	c <- len(resultado.InsertedIDs) > 0
-}
-
 // Obtiene todas las organizaciones
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
 	var organizaciones []models.Organizacion
@@ -129,4 +115,15 @@ func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organ
 		return 0, err
 	}
 	return result.ModifiedCount, nil
+}
+
+//PurgarOrganizaciones borra toda la collecion
+func (o *OrganizacionesRepository) PurgarOrganizaciones() error {
+
+	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	defer cancel()
+
+	err := col.Drop(ctx)
+
+	return err
 }
