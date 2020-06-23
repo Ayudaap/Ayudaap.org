@@ -33,6 +33,13 @@ func GetHandler() http.Handler {
 	apiOrg.HandleFunc("/{id}", GetOrganizacionById).Methods("GET").Name("getOrganizacionById")
 	apiOrg.HandleFunc("/{id}", DeleteOrganizacion).Methods("DELETE").Name("borrarOrganizacion")
 
+	apiProy := api.PathPrefix("/proyecto").Subrouter()
+	apiProy.HandleFunc("/", Createproyecto).Methods("POST").Name("crearProyecto")
+	apiProy.HandleFunc("/", GetALlProyectosReq).Methods("GET").Name("obtenerProyectos")
+	apiProy.HandleFunc("/", UpsertProyecto).Methods("PUT").Name("modificarProyecto")
+	apiProy.HandleFunc("/{id}", GetProyectoById).Methods("GET").Name("getProyectoById")
+	apiProy.HandleFunc("/{id}", DeleteProyecto).Methods("DELETE").Name("borrarProyecto")
+
 	return r
 }
 

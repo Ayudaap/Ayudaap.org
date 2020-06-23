@@ -12,8 +12,6 @@ import (
 	"Ayudaap.org/repository"
 )
 
-var organizaciones []models.Organizacion
-
 // Modelo de organizaciones
 var orgRepo *repository.OrganizacionesRepository
 

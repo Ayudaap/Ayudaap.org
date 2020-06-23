@@ -10,7 +10,7 @@ type Proyecto struct {
 	Nombre    string             `json:"nombre" bson:"nombre"`
 	Objetivo  string             `json:"objetivo,omitempty" bson:"objetivo"`
 	Activo    bool               `json:"activo" bson:"activo"`
-	Area      Area               `json:"area" bson:"activo"`
+	Area      Area               `json:"area" bson:"area"`
 	Auditoria Auditoria          `json:"auditoria,omitempty" bson:"auditoria"`
 
 	//TODO: Mover a modelo de Convocatoria
