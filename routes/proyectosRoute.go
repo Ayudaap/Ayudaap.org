@@ -43,6 +43,7 @@ func Createproyecto(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&proyecto); err != nil {
 		GetError(err, w)
+		return
 	}
 
 	proyecto.ID = primitive.NewObjectID()

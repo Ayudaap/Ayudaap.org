@@ -107,7 +107,6 @@ func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organ
 	filter := bson.M{"_id": organizacion.ID}
 	update := bson.M{"$set": organizacion}
 
-	organizacion.Auditoria.CreatedAt = organizacion.Auditoria.CreatedAt
 	organizacion.Auditoria.UpdatedAt = primitive.Timestamp{T: uint32(time.Now().Unix())}
 
 	result, err := col.UpdateOne(ctx, filter, update)
