@@ -11,4 +11,5 @@ type Organizacion struct {
 	Nombre    string             `json:"nombre,omitempty" bson:"nombre"`
 	Domicilio Direccion          `json:"direccion,omitempty" bson:"direccion"`
 	Auditoria Auditoria          `json:"auditoria,omitempty" bson:"auditoria"`
+	Banner    string             `json:"banner,omitempty" bson:"banner"`
 }
