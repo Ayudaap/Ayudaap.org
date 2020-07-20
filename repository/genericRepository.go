@@ -7,13 +7,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Repositorio de base de datos
+//GenericRepository Repositorio de base de datos
 type GenericRepository struct {
 	// Nombre de la colecion del modelo
 	Collection string
 }
 
-// Inserta una nueva instancia del modelo
+//Insert Inserta una nueva instancia del modelo
 func (g *GenericRepository) Insert(modelo interface{}) string {
 	col, ctx, cancel := GetCollection(DataBase, g.Collection)
 	defer cancel()
@@ -29,7 +29,7 @@ func (g *GenericRepository) Insert(modelo interface{}) string {
 	return result
 }
 
-// Obtiene todas las instancias del objeto
+//GetAll Obtiene todas las instancias del objeto
 func (g *GenericRepository) GetAll() []interface{} {
 	var modelos []interface{}
 
@@ -48,7 +48,7 @@ func (g *GenericRepository) GetAll() []interface{} {
 	return modelos
 }
 
-// Obtiene una objeto por Id
+//GetModeloById Obtiene una objeto por Id
 func (g *GenericRepository) GetModeloById(id string) *interface{} {
 	col, ctx, cancel := GetCollection(DataBase, g.Collection)
 	defer cancel()
@@ -64,7 +64,7 @@ func (g *GenericRepository) GetModeloById(id string) *interface{} {
 	return modelo
 }
 
-// Elimina una modelo
+//Delete Elimina una modelo
 func (g *GenericRepository) Delete(id string) (int, error) {
 	col, ctx, cancel := GetCollection(DataBase, g.Collection)
 	defer cancel()
@@ -87,7 +87,7 @@ func (g *GenericRepository) Delete(id string) (int, error) {
 	return int(result.DeletedCount), nil
 }
 
-// Actualiza una modelo retornando el total de elementos que se modificaron
+//Update Actualiza una modelo retornando el total de elementos que se modificaron
 func (g *GenericRepository) Update(modelo *interface{}, id string) (int64, error) {
 
 	col, ctx, cancel := GetCollection(DataBase, g.Collection)

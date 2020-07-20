@@ -9,15 +9,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Repositorio de base de datos
+//ProyectosRepository Repositorio de base de datos
 type ProyectosRepository struct{}
 
-// Nombre de la tabla de proyectos
+var dbRepo MongoRepository
+
+func (o ProyectosRepository) init() {
+	dbRepo = MongoRepository.GetInstance()
+}
+
+//ProyectosCollection Nombre de la tabla de proyectos
 const ProyectosCollection string = "proyectos"
 
-// Inserta una nueva instancia de Proyecto
+//InsertProyecto Inserta una nueva instancia de Proyecto
 func (o *ProyectosRepository) InsertProyecto(proyecto models.Proyecto) string {
-	col, ctx, cancel := GetCollection(DataBase, ProyectosCollection)
+	col, ctx, cancel := dbRepo.GetCollection(DataBase, ProyectosCollection)
 	defer cancel()
 
 	proyecto.Auditoria = models.Auditoria{
@@ -36,11 +42,11 @@ func (o *ProyectosRepository) InsertProyecto(proyecto models.Proyecto) string {
 	return result
 }
 
-// Obtiene todas los proyectos
+//GetAllProyectos Obtiene todas los proyectos
 func (o *ProyectosRepository) GetAllProyectos() []models.Proyecto {
 	var proyectos []models.Proyecto
 
-	col, ctx, cancel := GetCollection(DataBase, ProyectosCollection)
+	col, ctx, cancel := dbRepo.GetCollection(DataBase, ProyectosCollection)
 	defer cancel()
 
 	datos, err := col.Find(ctx, bson.D{})
@@ -61,7 +67,7 @@ func (o *ProyectosRepository) GetAllProyectos() []models.Proyecto {
 
 // Obtiene una Proyecto por Id
 func (o *ProyectosRepository) GetProyectoById(id string) *models.Proyecto {
-	col, ctx, cancel := GetCollection(DataBase, ProyectosCollection)
+	col, ctx, cancel := dbRepo.GetCollection(DataBase, ProyectosCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
@@ -77,7 +83,7 @@ func (o *ProyectosRepository) GetProyectoById(id string) *models.Proyecto {
 
 // Elimina una Proyecto
 func (o *ProyectosRepository) DeleteProyecto(id string) (int, error) {
-	col, ctx, cancel := GetCollection(DataBase, ProyectosCollection)
+	col, ctx, cancel := dbRepo.GetCollection(DataBase, ProyectosCollection)
 	defer cancel()
 
 	oID, err := primitive.ObjectIDFromHex(id)
@@ -101,7 +107,7 @@ func (o *ProyectosRepository) DeleteProyecto(id string) (int, error) {
 // Actualiza una Proyecto retornando el total de elementos que se modificaron
 func (o *ProyectosRepository) UpdateProyecto(proyecto *models.Proyecto) (int64, error) {
 
-	col, ctx, cancel := GetCollection(DataBase, ProyectosCollection)
+	col, ctx, cancel := dbRepo.GetCollection(DataBase, ProyectosCollection)
 	defer cancel()
 
 	filter := bson.M{"_id": proyecto.ID}
@@ -119,7 +125,7 @@ func (o *ProyectosRepository) UpdateProyecto(proyecto *models.Proyecto) (int64, 
 //Purgarproyectos borra toda la collecion
 func (o *ProyectosRepository) PurgarProyectos() error {
 
-	col, ctx, cancel := GetCollection(DataBase, ProyectosCollection)
+	col, ctx, cancel := dbRepo.GetCollection(DataBase, ProyectosCollection)
 	defer cancel()
 
 	err := col.Drop(ctx)

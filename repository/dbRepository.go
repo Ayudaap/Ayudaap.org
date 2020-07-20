@@ -25,7 +25,7 @@ var once sync.Once
 const dataBase string = "AyudaapDb"
 
 //GetInstance Obtiene acceso a una instancia de conexion hacia MongoDb
-func GetInstance() *MongoRepository {
+func (m MongoRepository) GetInstance() *MongoRepository {
 	once.Do(conectarBD)
 	return instancia
 }
@@ -63,7 +63,7 @@ func conectarBD() {
 func (m MongoRepository) ChequeoConnection() int {
 
 	if instancia != nil {
-		instancia = GetInstance()
+		instancia = m.GetInstance()
 	}
 
 	err := instancia.db.Ping(context.TODO(), nil)
@@ -80,7 +80,7 @@ func (m MongoRepository) GetCollection(dataBase string, collection string) (*mon
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 
 	if instancia != nil {
-		instancia = GetInstance()
+		instancia = m.GetInstance()
 	}
 
 	db := instancia.db.Database(dataBase)
