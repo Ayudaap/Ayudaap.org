@@ -16,7 +16,7 @@ import (
 var proyRepo *repository.ProyectosRepository
 
 func init() {
-	proyRepo = new(repository.ProyectosRepository)
+	proyRepo = &repository.ProyectosRepository{*repository.GetInstance()}
 }
 
 // Lista todas las Proyectos
@@ -69,7 +69,7 @@ func Createproyecto(w http.ResponseWriter, r *http.Request) {
 func GetProyectoById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
-	resultados := proyRepo.GetProyectoById(id)
+	resultados := proyRepo.GetProyectoByID(id)
 
 	if resultados == nil {
 		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})

@@ -11,20 +11,27 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-/* MongoCN objeto de conexión de la BD */
-var MongoCN *mongo.Client
+//MongoRepository Repositorio Singleton
+type MongoRepository struct {
+	db *mongo.Client
+}
+
+/* mongoCN objeto de conexión de la BD */
+var instancia *MongoRepository
 var once sync.Once
 
 // Nombre de la base de datos
-const DataBase string = "AyudaapDb"
+//TODO: Implementar extraccion desde archivo de configuracion
+const dataBase string = "AyudaapDb"
 
-// Inicializa una nueva instancia
-func init() {
+//GetInstance Obtiene acceso a una instancia de conexion hacia MongoDb
+func GetInstance() *MongoRepository {
 	once.Do(conectarBD)
-	//return MongoCN
+	return instancia
 }
 
 // ConectarDB inicia una conexión de hacia la BD
+//TODO: Implementar consulta desde archivo de configuracion
 func conectarBD() {
 	// host := os.Getenv("DB_HOST")
 	// port := os.Getenv("DB_PORT")
@@ -38,7 +45,6 @@ func conectarBD() {
 	clienteOpts := options.Client().ApplyURI(cadenaConexion)
 	cliente, err := mongo.Connect(context.TODO(), clienteOpts)
 
-	fmt.Println("Cadena de conexion", cadenaConexion)
 	if err != nil {
 		log.Fatal(err.Error())
 		return
@@ -49,26 +55,34 @@ func conectarBD() {
 		log.Fatal(err.Error())
 		return
 	}
-	log.Println("Conexión Exitosa con la BD")
-	MongoCN = cliente
+
+	instancia = &MongoRepository{db: cliente}
 }
 
-/*ChequeoConnection es el Ping a la BD */
-func ChequeoConnection() int {
-	err := MongoCN.Ping(context.TODO(), nil)
+//ChequeoConnection Revisa si la conexion sigue activa
+func (m MongoRepository) ChequeoConnection() int {
+
+	if instancia != nil {
+		instancia = GetInstance()
+	}
+
+	err := instancia.db.Ping(context.TODO(), nil)
 	if err != nil {
 		return 0
 	}
 	return 1
 }
 
-// Obtienene la colecion y el contexto de trabaj
-// `dataBase` Nombre de la base de datos
+// GetCollection Obtienene la colecion y el contexto de trabaj
 // `collection` Nombre de la conexion
-func GetCollection(dataBase string, collection string) (*mongo.Collection, context.Context, context.CancelFunc) {
+func (m MongoRepository) GetCollection(collection string) (*mongo.Collection, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 
-	db := MongoCN.Database(dataBase)
+	if instancia != nil {
+		instancia = GetInstance()
+	}
+
+	db := instancia.db.Database(dataBase)
 	col := db.Collection(collection)
 
 	return col, ctx, cancel
