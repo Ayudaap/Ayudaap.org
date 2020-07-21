@@ -9,15 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Repositorio de base de datos
-type OrganizacionesRepository struct{}
+//OrganizacionesRepository Repositorio de base de datos
+type OrganizacionesRepository struct {
+	DbRepo MongoRepository
+}
 
 // Nombre de la tabla de organizaciones
 const organizacionCollection string = "organizaciones"
 
-// Inserta una nueva instancia de Organizacion
+//InsertOrganizacion Inserta una nueva instancia de Organizacion
 func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organizacion) string {
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
 	organizacion.Auditoria = models.Auditoria{
@@ -40,7 +42,7 @@ func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organi
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
 	var organizaciones []models.Organizacion
 
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
 	datos, err := col.Find(ctx, bson.D{})
@@ -61,7 +63,7 @@ func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion 
 
 // Obtiene una organizacion por Id
 func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organizacion {
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
@@ -77,7 +79,7 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 
 // Elimina una organizacion
 func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
 	oID, err := primitive.ObjectIDFromHex(id)
@@ -101,7 +103,7 @@ func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
 // Actualiza una organizacion retornando el total de elementos que se modificaron
 func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organizacion) (int64, error) {
 
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
 	filter := bson.M{"_id": organizacion.ID}
@@ -119,7 +121,7 @@ func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organ
 //PurgarOrganizaciones borra toda la collecion
 func (o *OrganizacionesRepository) PurgarOrganizaciones() error {
 
-	col, ctx, cancel := GetCollection(DataBase, organizacionCollection)
+	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
 	err := col.Drop(ctx)
