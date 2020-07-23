@@ -19,7 +19,7 @@ func init() {
 	orgRepo = &repository.OrganizacionesRepository{*repository.GetInstance()}
 }
 
-// Lista todas las organizaciones
+//GetALlOrganizacionesReq Lista todas las organizaciones
 func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -34,7 +34,7 @@ func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Crea una nueva organizacion
+//CreateOrganizacion Crea una nueva organizacion
 func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	defer r.Body.Close()
@@ -67,11 +67,11 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Obtiene una organizacion por ID
+//GetOrganizacionById Obtiene una organizacion por ID
 func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
-	resultados := orgRepo.GetOrganizacionById(id)
+	resultados := orgRepo.GetOrganizacionByID(id)
 
 	if resultados == nil {
 		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
@@ -81,7 +81,7 @@ func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Elimina una organizacion
+//DeleteOrganizacion Elimina una organizacion
 func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
@@ -97,7 +97,7 @@ func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Actualiza un objeto
+//UpsertOrganizacion Actualiza un objeto
 func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	defer r.Body.Close()

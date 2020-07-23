@@ -38,7 +38,7 @@ func (o *OrganizacionesRepository) InsertOrganizacion(organizacion models.Organi
 	return result
 }
 
-// Obtiene todas las organizaciones
+//GetAllOrganizaciones Obtiene todas las organizaciones
 func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion {
 	var organizaciones []models.Organizacion
 
@@ -61,8 +61,8 @@ func (o *OrganizacionesRepository) GetAllOrganizaciones() []models.Organizacion 
 	return organizaciones
 }
 
-// Obtiene una organizacion por Id
-func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organizacion {
+//GetOrganizacionById Obtiene una organizacion por Id
+func (o *OrganizacionesRepository) GetOrganizacionByID(id string) *models.Organizacion {
 	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
 
@@ -77,7 +77,7 @@ func (o *OrganizacionesRepository) GetOrganizacionById(id string) *models.Organi
 	return organizacion
 }
 
-// Elimina una organizacion
+//DeleteOrganizacion Elimina una organizacion
 func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
 	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
 	defer cancel()
@@ -100,7 +100,7 @@ func (o *OrganizacionesRepository) DeleteOrganizacion(id string) (int, error) {
 	return int(result.DeletedCount), nil
 }
 
-// Actualiza una organizacion retornando el total de elementos que se modificaron
+//UpdateOrganizacion Actualiza una organizacion retornando el total de elementos que se modificaron
 func (o *OrganizacionesRepository) UpdateOrganizacion(organizacion *models.Organizacion) (int64, error) {
 
 	col, ctx, cancel := o.DbRepo.GetCollection(organizacionCollection)
