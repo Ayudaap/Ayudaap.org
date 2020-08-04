@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Obtiene el handler principal de la aplicacion
+//GetHandler Obtiene el handler principal de la aplicacion
 func GetHandler() http.Handler {
 	r := mux.NewRouter()
 	r.StrictSlash(true)
@@ -32,6 +32,10 @@ func GetHandler() http.Handler {
 	apiOrg.HandleFunc("/", UpsertOrganizacion).Methods("PUT").Name("modificarOrganizacion")
 	apiOrg.HandleFunc("/{id}", GetOrganizacionById).Methods("GET").Name("getOrganizacionById")
 	apiOrg.HandleFunc("/{id}", DeleteOrganizacion).Methods("DELETE").Name("borrarOrganizacion")
+
+	apiDir := api.PathPrefix("/direccion").Subrouter()
+	apiDir.HandleFunc("/", GetALlDireccionesReq).Methods("GET").Name("obtenerDireccion")
+	apiDir.HandleFunc("/{id}", GetDireccionByID).Methods("GET").Name("getDireccionById")
 
 	apiProy := api.PathPrefix("/proyecto").Subrouter()
 	apiProy.HandleFunc("/", Createproyecto).Methods("POST").Name("crearProyecto")
