@@ -31,3 +31,5 @@ Las organizaciones pueden definir el tipo de apoyo por ejemplo:
 
 ### ¿Cómo contribuir?
 Te gustaría __apoyarnos__, por favor revisa nuestra [guía para contribuidores](https://github.com/jaloorg/Jalo.Org/blob/master/CONTRIBUTING.md)
+
+Ùnete a nuestro "Servidor" en Discord https://discord.gg/PYr6aDu
