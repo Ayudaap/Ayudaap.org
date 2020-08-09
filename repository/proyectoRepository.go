@@ -69,7 +69,7 @@ func (o *ProyectosRepository) GetProyectoByID(id string) *models.Proyecto {
 	Oid, _ := primitive.ObjectIDFromHex(id)
 
 	var Proyecto *models.Proyecto
-	err := col.FindOne(ctx, bson.M{"_id": Oid}).Decode(&Proyecto)
+	err := col.FindOne(ctx, bson.M{"_Id": Oid}).Decode(&Proyecto)
 	if err != nil {
 		return nil
 	}

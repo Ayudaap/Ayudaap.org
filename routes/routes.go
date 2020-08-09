@@ -33,16 +33,20 @@ func GetHandler() http.Handler {
 	apiOrg.HandleFunc("/{id}", GetOrganizacionById).Methods("GET").Name("getOrganizacionById")
 	apiOrg.HandleFunc("/{id}", DeleteOrganizacion).Methods("DELETE").Name("borrarOrganizacion")
 
-	apiDir := api.PathPrefix("/direccion").Subrouter()
-	apiDir.HandleFunc("/", GetALlDireccionesReq).Methods("GET").Name("obtenerDireccion")
-	apiDir.HandleFunc("/{id}", GetDireccionByID).Methods("GET").Name("getDireccionById")
-
 	apiProy := api.PathPrefix("/proyecto").Subrouter()
 	apiProy.HandleFunc("/", Createproyecto).Methods("POST").Name("crearProyecto")
 	apiProy.HandleFunc("/", GetALlProyectosReq).Methods("GET").Name("obtenerProyectos")
 	apiProy.HandleFunc("/", UpsertProyecto).Methods("PUT").Name("modificarProyecto")
 	apiProy.HandleFunc("/{id}", GetProyectoById).Methods("GET").Name("getProyectoById")
 	apiProy.HandleFunc("/{id}", DeleteProyecto).Methods("DELETE").Name("borrarProyecto")
+
+	apiDir := api.PathPrefix("/direccion").Subrouter()
+	apiDir.HandleFunc("/", GetALlDireccionesReq).Methods("GET").Name("obtenerDireccion")
+	apiDir.HandleFunc("/{id}", GetDireccionByID).Methods("GET").Name("getDireccionById")
+
+	apiDire := api.PathPrefix("/directorio").Subrouter()
+	apiDire.HandleFunc("/", GetALlDirectorioReq).Methods("GET").Name("obtenerDirectorios")
+	apiDire.HandleFunc("/{id}", GetDirectorioById).Methods("GET").Name("getDirectorioById")
 
 	return r
 }

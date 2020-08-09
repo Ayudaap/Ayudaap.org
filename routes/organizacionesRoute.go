@@ -16,7 +16,7 @@ import (
 var orgRepo *repository.OrganizacionesRepository
 
 func init() {
-	orgRepo = &repository.OrganizacionesRepository{*repository.GetInstance()}
+	orgRepo = &repository.OrganizacionesRepository{DbRepo: *repository.GetInstance()}
 }
 
 //GetALlOrganizacionesReq Lista todas las organizaciones

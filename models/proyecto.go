@@ -1,12 +1,14 @@
 package models
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //Proyecto Modelo de datos que representa un proyecto
 type Proyecto struct {
-	ID        primitive.ObjectID `json:"Id" bson:"_id`
+	ID        primitive.ObjectID `json:"Id" bson:"_Id"`
 	Nombre    string             `json:"nombre" bson:"nombre"`
 	Objetivo  string             `json:"objetivo,omitempty" bson:"objetivo"`
 	Activo    bool               `json:"activo" bson:"activo"`
@@ -15,8 +17,10 @@ type Proyecto struct {
 	Auditoria Auditoria          `json:"auditoria,omitempty" bson:"auditoria"`
 
 	//TODO: Mover a modelo de Convocatoria
-	Actividad             string  `json:"actividad,omitempty" bson:"actividad"`
-	VoluntariosRequeridos int     `json:"voluntariosRequeridos" bson:"voluntariosRequeridos"`
-	CapacidadesRequeridas string  `json:"capacidadesRequeridas,omitempty" bson:"capacidadesRequeridas"`
-	Costo                 float32 `json:"costo,omitempty" bson:"costo"`
+	Actividad             string    `json:"actividad,omitempty" bson:"actividad"`
+	VoluntariosRequeridos int       `json:"voluntariosRequeridos" bson:"voluntariosRequeridos"`
+	CapacidadesRequeridas string    `json:"capacidadesRequeridas,omitempty" bson:"capacidadesRequeridas"`
+	Costo                 float32   `json:"costo,omitempty" bson:"costo"`
+	Inicio                time.Time `json:"fechaInicio,omitempty" bson:"fechaInicio"`
+	Fin                   time.Time `json:"fechaFin,omitempty" bson:"fechaFin"`
 }

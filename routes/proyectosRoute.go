@@ -12,14 +12,14 @@ import (
 	"Ayudaap.org/repository"
 )
 
-// Modelo de Proyectos
+//proyRepo Modelo de Proyectos
 var proyRepo *repository.ProyectosRepository
 
 func init() {
-	proyRepo = &repository.ProyectosRepository{*repository.GetInstance()}
+	proyRepo = &repository.ProyectosRepository{DbRepo: *repository.GetInstance()}
 }
 
-// Lista todas las Proyectos
+//GetALlProyectosReq Lista todas las Proyectos
 func GetALlProyectosReq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -34,7 +34,7 @@ func GetALlProyectosReq(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Crea una nueva organizacion
+//Createproyecto Crea una nueva organizacion
 func Createproyecto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	defer r.Body.Close()
@@ -65,7 +65,7 @@ func Createproyecto(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Obtiene una proyecto por ID
+//GetProyectoById Obtiene una proyecto por ID
 func GetProyectoById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
@@ -79,7 +79,7 @@ func GetProyectoById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Elimina un proyecto
+//DeleteProyecto Elimina un proyecto
 func DeleteProyecto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
@@ -95,7 +95,7 @@ func DeleteProyecto(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Actualiza un objeto
+//UpsertProyecto Actualiza un objeto
 func UpsertProyecto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	defer r.Body.Close()
