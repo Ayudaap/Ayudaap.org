@@ -34,6 +34,22 @@ func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//GetDireccionByOrganizacionIDReq Obtiene la direccion por el Id de una organizacion
+func GetDireccionByOrganizacionIDReq(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	id := mux.Vars(r)["id"]
+
+	resultados, error := orgRepo.GetDireccionByOrganizacionID(id)
+
+	if error != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resultados)
+	}
+}
+
 //CreateOrganizacion Crea una nueva organizacion
 func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
