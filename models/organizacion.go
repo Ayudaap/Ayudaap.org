@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Modelo de datos que representa una organizacion
+//Organizacion Modelo de datos que representa una organizacion
 type Organizacion struct {
 	ID        primitive.ObjectID `json:"Id" bson:"_id, omitempty"`
 	Tipo      TipoOrganizacion   `json:"tipo,omitempty" bson:"tipo"`

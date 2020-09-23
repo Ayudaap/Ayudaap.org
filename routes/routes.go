@@ -7,7 +7,6 @@ import (
 
 	"Ayudaap.org/models"
 	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //GetHandler Obtiene el handler principal de la aplicacion
@@ -24,8 +23,6 @@ func GetHandler() http.Handler {
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.StrictSlash(true)
 
-	api.HandleFunc("/oID/", GetPrimitiveID).Methods("GET").Name("getOId")
-
 	apiOrg := api.PathPrefix("/organizacion").Subrouter()
 	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("crearOrganizacion")
 	apiOrg.HandleFunc("/", GetALlOrganizacionesReq).Methods("GET").Name("obtenerOrganizaciones")
@@ -40,10 +37,6 @@ func GetHandler() http.Handler {
 	apiProy.HandleFunc("/", UpsertProyecto).Methods("PUT").Name("modificarProyecto")
 	apiProy.HandleFunc("/{id}", GetProyectoById).Methods("GET").Name("getProyectoById")
 	apiProy.HandleFunc("/{id}", DeleteProyecto).Methods("DELETE").Name("borrarProyecto")
-
-	apiDire := api.PathPrefix("/directorio").Subrouter()
-	apiDire.HandleFunc("/", GetALlDirectorioReq).Methods("GET").Name("obtenerDirectorios")
-	apiDire.HandleFunc("/{id}", GetDirectorioById).Methods("GET").Name("getDirectorioById")
 
 	return r
 }
@@ -62,15 +55,4 @@ func GetError(err error, w http.ResponseWriter) {
 
 	w.WriteHeader(response.StatusCode)
 	w.Write(message)
-}
-
-// Obtiene un Id General
-func GetPrimitiveID(w http.ResponseWriter, r *http.Request) {
-	id := primitive.NewObjectID()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(struct {
-		Id string `json:"id,omitempty"`
-	}{Id: id.Hex()})
 }
