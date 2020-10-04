@@ -60,9 +60,9 @@ func conectarBD() {
 }
 
 //ChequeoConnection Revisa si la conexion sigue activa
-func (m MongoRepository) ChequeoConnection() int {
+func ChequeoConnection() int {
 
-	if instancia != nil {
+	if instancia == nil {
 		instancia = GetInstance()
 	}
 
@@ -75,13 +75,15 @@ func (m MongoRepository) ChequeoConnection() int {
 
 // GetCollection Obtienene la colecion y el contexto de trabaj
 // `collection` Nombre de la conexion
-func (m MongoRepository) GetCollection(collection string) (*mongo.Collection, context.Context, context.CancelFunc) {
+func GetCollection(collection string) (*mongo.Collection, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 
-	if instancia != nil {
+	if instancia == nil {
 		instancia = GetInstance()
 	}
 
+	x := instancia == nil
+	fmt.Println(x)
 	db := instancia.db.Database(dataBase)
 	col := db.Collection(collection)
 
