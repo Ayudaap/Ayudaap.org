@@ -9,25 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"Ayudaap.org/models"
-	"Ayudaap.org/repository"
+	repo "Ayudaap.org/repository"
 )
 
-//proyRepo Modelo de Proyectos
-var proyRepo *repository.ProyectosRepository
-
-func init() {
-	proyRepo = &repository.ProyectosRepository{DbRepo: *repository.GetInstance()}
-}
-
-//GetALlProyectosReq Lista todas las Proyectos
-func GetALlProyectosReq(w http.ResponseWriter, r *http.Request) {
+//GetALlProyectos Lista todas las Proyectos
+func GetALlProyectos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	resultados := proyRepo.GetAllProyectos()
+	resultados := repo.GetAllProyectos()
 
 	if len(resultados) <= 0 {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
+		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
@@ -52,7 +44,7 @@ func Createproyecto(w http.ResponseWriter, r *http.Request) {
 	proyectoInsertada := make(chan string)
 	defer close(proyectoInsertada)
 
-	idInsertado := proyRepo.InsertProyecto(proyecto)
+	idInsertado := repo.InsertProyecto(proyecto)
 
 	if len(idInsertado) <= 0 {
 		err := errors.New("No se pudo insertar el objeto")
@@ -60,19 +52,19 @@ func Createproyecto(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(struct {
-			Id string `json:"id,omitempty"`
-		}{Id: idInsertado})
+			ID string `json:"id,omitempty"`
+		}{ID: idInsertado})
 	}
 }
 
-//GetProyectoById Obtiene una proyecto por ID
-func GetProyectoById(w http.ResponseWriter, r *http.Request) {
+//GetProyectoByID Obtiene una proyecto por ID
+func GetProyectoByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
-	resultados := proyRepo.GetProyectoByID(id)
+	resultados := repo.GetProyectoByID(id)
 
 	if resultados == nil {
-		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
+		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
@@ -84,7 +76,7 @@ func DeleteProyecto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["id"]
 
-	resultados, err := proyRepo.DeleteProyecto(id)
+	resultados, err := repo.DeleteProyecto(id)
 	if err != nil {
 		GetError(err, w)
 	} else {
@@ -106,7 +98,7 @@ func UpsertProyecto(w http.ResponseWriter, r *http.Request) {
 		GetError(err, w)
 	}
 
-	resultados, err := proyRepo.UpdateProyecto(&proyecto)
+	resultados, err := repo.UpdateProyecto(&proyecto)
 	if err != nil {
 		GetError(err, w)
 	} else {

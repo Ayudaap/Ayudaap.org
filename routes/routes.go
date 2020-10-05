@@ -23,19 +23,22 @@ func GetHandler() http.Handler {
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.StrictSlash(true)
 
-	apiOrg := api.PathPrefix("/organizacion").Subrouter()
-	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("crearOrganizacion")
-	apiOrg.HandleFunc("/", GetALlOrganizacionesReq).Methods("GET").Name("obtenerOrganizaciones")
-	apiOrg.HandleFunc("/", UpsertOrganizacion).Methods("PUT").Name("modificarOrganizacion")
-	apiOrg.HandleFunc("/{id}", GetOrganizacionById).Methods("GET").Name("getOrganizacionById")
-	apiOrg.HandleFunc("/{id}", DeleteOrganizacion).Methods("DELETE").Name("borrarOrganizacion")
-	apiOrg.HandleFunc("/{id}/direccion", GetDireccionByOrganizacionIDReq).Methods("GET").Name("getOrganizacionByOrganizacionID")
+	apiOrg := api.PathPrefix("/organizaciones").Subrouter()
+	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("createOrganizacion")
+	apiOrg.HandleFunc("/", GetALlOrganizaciones).Methods("GET").Name("getAllOrganizacions")
+	apiOrg.HandleFunc("/", UpsertOrganizacion).Methods("PUT").Name("updateOrganizacion")
+	apiOrg.HandleFunc("/{organizacionId}", GetOrganizacionByID).Methods("GET").Name("getOrganizacion")
+	apiOrg.HandleFunc("/{organizacionId}", DeleteOrganizacion).Methods("DELETE").Name("deleteOrganizacion")
+
+	// Direccion
+	apiOrg.HandleFunc("/{organizacionId}/direccion", UpdateDireccion).Methods("PUT").Name("updateDireccion")
+	apiOrg.HandleFunc("/{organizacionId}/direccion", GetDireccionByOrganizacionID).Methods("GET").Name("getOrganizacionDireccion")
 
 	apiProy := api.PathPrefix("/proyecto").Subrouter()
 	apiProy.HandleFunc("/", Createproyecto).Methods("POST").Name("crearProyecto")
-	apiProy.HandleFunc("/", GetALlProyectosReq).Methods("GET").Name("obtenerProyectos")
+	apiProy.HandleFunc("/", GetALlProyectos).Methods("GET").Name("obtenerProyectos")
 	apiProy.HandleFunc("/", UpsertProyecto).Methods("PUT").Name("modificarProyecto")
-	apiProy.HandleFunc("/{id}", GetProyectoById).Methods("GET").Name("getProyectoById")
+	apiProy.HandleFunc("/{id}", GetProyectoByID).Methods("GET").Name("getProyectoById")
 	apiProy.HandleFunc("/{id}", DeleteProyecto).Methods("DELETE").Name("borrarProyecto")
 
 	return r
@@ -55,4 +58,11 @@ func GetError(err error, w http.ResponseWriter) {
 
 	w.WriteHeader(response.StatusCode)
 	w.Write(message)
+}
+
+// GetGenericError Genera un mensaje generico de error
+func GetGenericMessage(mensaje string, codigo int, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(codigo)
+	json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: mensaje})
 }

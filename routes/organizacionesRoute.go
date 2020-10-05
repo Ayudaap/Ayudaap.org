@@ -9,41 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"Ayudaap.org/models"
-	"Ayudaap.org/repository"
+	repo "Ayudaap.org/repository"
 )
 
-// Modelo de organizaciones
-var orgRepo *repository.OrganizacionesRepository
-
-func init() {
-	orgRepo = &repository.OrganizacionesRepository{DbRepo: *repository.GetInstance()}
-}
-
-//GetALlOrganizacionesReq Lista todas las organizaciones
-func GetALlOrganizacionesReq(w http.ResponseWriter, r *http.Request) {
+//GetALlOrganizaciones Lista todas las organizaciones
+func GetALlOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	resultados := orgRepo.GetAllOrganizaciones()
+	resultados := repo.GetAllOrganizaciones()
 
 	if len(resultados) <= 0 {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
-	} else {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(resultados)
-	}
-}
-
-//GetDireccionByOrganizacionIDReq Obtiene la direccion por el Id de una organizacion
-func GetDireccionByOrganizacionIDReq(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	id := mux.Vars(r)["id"]
-
-	resultados, error := orgRepo.GetDireccionByOrganizacionID(id)
-
-	if error != nil {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
+		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
@@ -70,7 +46,7 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	organizacionInsertada := make(chan string)
 	defer close(organizacionInsertada)
 
-	idInsertado := orgRepo.InsertOrganizacion(organizacion)
+	idInsertado := repo.InsertOrganizacion(organizacion)
 
 	if len(idInsertado) <= 0 {
 		err := errors.New("No se pudo insertar el objeto")
@@ -78,16 +54,16 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(struct {
-			Id string `json:"id,omitempty"`
-		}{Id: idInsertado})
+			ID string `json:"id,omitempty"`
+		}{ID: idInsertado})
 	}
 }
 
-//GetOrganizacionById Obtiene una organizacion por ID
-func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
+//GetOrganizacionByID Obtiene una organizacion por ID
+func GetOrganizacionByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	id := mux.Vars(r)["id"]
-	resultados := orgRepo.GetOrganizacionByID(id)
+	id := mux.Vars(r)["organizacionId"]
+	resultados := repo.GetOrganizacionByID(id)
 
 	if resultados == nil {
 		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
@@ -100,9 +76,9 @@ func GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
 //DeleteOrganizacion Elimina una organizacion
 func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	id := mux.Vars(r)["id"]
+	id := mux.Vars(r)["organizacionId"]
 
-	resultados, err := orgRepo.DeleteOrganizacion(id)
+	resultados, err := repo.DeleteOrganizacion(id)
 	if err != nil {
 		GetError(err, w)
 	} else {
@@ -124,7 +100,7 @@ func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 		GetError(err, w)
 	}
 
-	resultados, err := orgRepo.UpdateOrganizacion(&organizacion)
+	resultados, err := repo.UpdateOrganizacion(&organizacion)
 	if err != nil {
 		GetError(err, w)
 	} else {
@@ -133,4 +109,44 @@ func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 			Procesado int64 `json:"procesado,omitempty"`
 		}{Procesado: resultados})
 	}
+}
+
+// Información de direccion
+
+//GetDireccionByOrganizacionID Obtiene la direccion por el Id de una organizacion
+func GetDireccionByOrganizacionID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	id := mux.Vars(r)["organizacionId"]
+
+	resultados, error := repo.GetDireccionByOrganizacionID(id)
+
+	if error != nil {
+		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resultados)
+	}
+}
+
+// UpdateDireccion Actualiza la direccion de la organizacion
+func UpdateDireccion(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	id := mux.Vars(r)["organizacionId"]
+
+	var direccion *models.Direccion
+
+	if err := json.NewDecoder(r.Body).Decode(&direccion); err != nil {
+		GetError(err, w)
+	}
+
+	resultados, err := repo.UpdateDireccion(id, direccion)
+	if err != nil {
+		GetGenericMessage("No pudo ejecutar la operacion", http.StatusMethodNotAllowed, w)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(struct {
+			Procesado int64 `json:"procesado,omitempty"`
+		}{Procesado: resultados})
+	}
+
 }
