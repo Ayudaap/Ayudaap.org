@@ -82,8 +82,6 @@ func GetCollection(collection string) (*mongo.Collection, context.Context, conte
 		instancia = GetInstance()
 	}
 
-	x := instancia == nil
-	fmt.Println(x)
 	db := instancia.db.Database(dataBase)
 	col := db.Collection(collection)
 

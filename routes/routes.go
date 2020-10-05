@@ -23,13 +23,16 @@ func GetHandler() http.Handler {
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.StrictSlash(true)
 
-	apiOrg := api.PathPrefix("/organizacion").Subrouter()
-	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("crearOrganizacion")
-	apiOrg.HandleFunc("/", GetALlOrganizaciones).Methods("GET").Name("obtenerOrganizaciones")
-	apiOrg.HandleFunc("/", UpsertOrganizacion).Methods("PUT").Name("modificarOrganizacion")
-	apiOrg.HandleFunc("/{id}", GetOrganizacionByID).Methods("GET").Name("getOrganizacionById")
-	apiOrg.HandleFunc("/{id}", DeleteOrganizacion).Methods("DELETE").Name("borrarOrganizacion")
-	apiOrg.HandleFunc("/{id}/direccion", GetDireccionByOrganizacionID).Methods("GET").Name("getOrganizacionByOrganizacionID")
+	apiOrg := api.PathPrefix("/organizaciones").Subrouter()
+	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("createOrganizacion")
+	apiOrg.HandleFunc("/", GetALlOrganizaciones).Methods("GET").Name("getAllOrganizacions")
+	apiOrg.HandleFunc("/", UpsertOrganizacion).Methods("PUT").Name("updateOrganizacion")
+	apiOrg.HandleFunc("/{organizacionId}", GetOrganizacionByID).Methods("GET").Name("getOrganizacion")
+	apiOrg.HandleFunc("/{organizacionId}", DeleteOrganizacion).Methods("DELETE").Name("deleteOrganizacion")
+
+	// Direccion
+	apiOrg.HandleFunc("/{organizacionId}/direccion", UpdateDireccion).Methods("PUT").Name("updateDireccion")
+	apiOrg.HandleFunc("/{organizacionId}/direccion", GetDireccionByOrganizacionID).Methods("GET").Name("getOrganizacionDireccion")
 
 	apiProy := api.PathPrefix("/proyecto").Subrouter()
 	apiProy.HandleFunc("/", Createproyecto).Methods("POST").Name("crearProyecto")
@@ -58,7 +61,8 @@ func GetError(err error, w http.ResponseWriter) {
 }
 
 // GetGenericError Genera un mensaje generico de error
-func GetGenericMessage(mensaje string, w http.ResponseWriter) {
+func GetGenericMessage(mensaje string, codigo int, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(codigo)
 	json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: mensaje})
 }

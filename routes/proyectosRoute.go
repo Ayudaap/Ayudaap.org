@@ -19,7 +19,7 @@ func GetALlProyectos(w http.ResponseWriter, r *http.Request) {
 	resultados := repo.GetAllProyectos()
 
 	if len(resultados) <= 0 {
-		GetGenericMessage("No se encontraron datos a mostrar", w)
+		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)
@@ -64,7 +64,7 @@ func GetProyectoByID(w http.ResponseWriter, r *http.Request) {
 	resultados := repo.GetProyectoByID(id)
 
 	if resultados == nil {
-		GetGenericMessage("No se encontraron datos a mostrar", w)
+		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resultados)

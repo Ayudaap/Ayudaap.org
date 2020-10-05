@@ -113,23 +113,6 @@ func UpdateOrganizacion(organizacion *models.Organizacion) (int64, error) {
 	return result.ModifiedCount, nil
 }
 
-//GetDireccionByOrganizacionID Obtiene una Direccion por Id
-func GetDireccionByOrganizacionID(id string) (models.Direccion, error) {
-	col, ctx, cancel := GetCollection(organizacionCollection)
-	defer cancel()
-
-	Oid, _ := primitive.ObjectIDFromHex(id)
-
-	var organizacion *models.Organizacion
-
-	err := col.FindOne(ctx, bson.M{"_id": Oid}).Decode(&organizacion)
-	if err != nil {
-		return models.Direccion{}, err
-	}
-
-	return organizacion.Domicilio, nil
-}
-
 //PurgarOrganizaciones borra toda la collecion
 func PurgarOrganizaciones() error {
 
