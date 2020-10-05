@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -56,7 +57,7 @@ func GetAllOrganizaciones() []models.Organizacion {
 	return organizaciones
 }
 
-//GetOrganizacionById Obtiene una organizacion por Id
+//GetOrganizacionByID Obtiene una organizacion por Id
 func GetOrganizacionByID(id string) *models.Organizacion {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
@@ -96,18 +97,25 @@ func DeleteOrganizacion(id string) (int, error) {
 }
 
 //UpdateOrganizacion Actualiza una organizacion retornando el total de elementos que se modificaron
-func UpdateOrganizacion(organizacion *models.Organizacion) (int64, error) {
+func UpdateOrganizacion(id string, organizacion *models.Organizacion) (int64, error) {
 
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
-	filter := bson.M{"_id": organizacion.ID}
-	update := bson.M{"$set": organizacion}
+	oID, err := primitive.ObjectIDFromHex(id)
+
+	filter := bson.M{"_id": oID}
+	update := bson.M{"$set": bson.M{
+		"tipo":   organizacion.Tipo,
+		"nombre": organizacion.Nombre,
+		"banner": organizacion.Banner,
+	}}
 
 	organizacion.Auditoria.UpdatedAt = primitive.Timestamp{T: uint32(time.Now().Unix())}
 
 	result, err := col.UpdateOne(ctx, filter, update)
 	if err != nil {
+		fmt.Println(err.Error())
 		return 0, err
 	}
 	return result.ModifiedCount, nil

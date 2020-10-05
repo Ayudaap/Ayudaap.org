@@ -85,5 +85,7 @@ func GetCollection(collection string) (*mongo.Collection, context.Context, conte
 	db := instancia.db.Database(dataBase)
 	col := db.Collection(collection)
 
+	ChequeoConnection()
+
 	return col, ctx, cancel
 }

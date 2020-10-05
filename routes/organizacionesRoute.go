@@ -92,6 +92,8 @@ func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 //UpsertOrganizacion Actualiza un objeto
 func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	id := mux.Vars(r)["organizacionId"]
+
 	defer r.Body.Close()
 
 	var organizacion models.Organizacion
@@ -100,7 +102,7 @@ func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 		GetError(err, w)
 	}
 
-	resultados, err := repo.UpdateOrganizacion(&organizacion)
+	resultados, err := repo.UpdateOrganizacion(id,&organizacion)
 	if err != nil {
 		GetError(err, w)
 	} else {
