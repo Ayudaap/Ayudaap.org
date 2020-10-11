@@ -49,7 +49,8 @@ func GetHandler() http.Handler {
 	apiOrg := api.PathPrefix("/organizaciones").Subrouter()
 	apiOrg.HandleFunc("/", CreateOrganizacion).Methods("POST").Name("createOrganizacion")
 	apiOrg.HandleFunc("/", GetALlOrganizaciones).Methods("GET").Name("getAllOrganizacions")
-	apiOrg.HandleFunc("/{organizacionId}", UpsertOrganizacion).Methods("PUT").Name("updateOrganizacion")
+	apiOrg.HandleFunc("/q", GetOrganizacionByQuery).Methods("GET").Name("getOrganizacionByQuery")
+	apiOrg.HandleFunc("/{organizacionId}", UpdateOrganizacion).Methods("PUT").Name("updateOrganizacion")
 	apiOrg.HandleFunc("/{organizacionId}", GetOrganizacionByID).Methods("GET").Name("getOrganizacion")
 	apiOrg.HandleFunc("/{organizacionId}", DeleteOrganizacion).Methods("DELETE").Name("deleteOrganizacion")
 
@@ -57,12 +58,12 @@ func GetHandler() http.Handler {
 	apiOrg.HandleFunc("/{organizacionId}/direccion", UpdateDireccion).Methods("PUT").Name("updateDireccion")
 	apiOrg.HandleFunc("/{organizacionId}/direccion", GetDireccionByOrganizacionID).Methods("GET").Name("getOrganizacionDireccion")
 
-	apiProy := api.PathPrefix("/proyecto").Subrouter()
+	apiProy := api.PathPrefix("/proyectos").Subrouter()
 	apiProy.HandleFunc("/", Createproyecto).Methods("POST").Name("crearProyecto")
 	apiProy.HandleFunc("/", GetALlProyectos).Methods("GET").Name("obtenerProyectos")
 	apiProy.HandleFunc("/", UpsertProyecto).Methods("PUT").Name("modificarProyecto")
-	apiProy.HandleFunc("/{id}", GetProyectoByID).Methods("GET").Name("getProyectoById")
-	apiProy.HandleFunc("/{id}", DeleteProyecto).Methods("DELETE").Name("borrarProyecto")
+	apiProy.HandleFunc("/{proyectoId}", GetProyectoByID).Methods("GET").Name("getProyectoById")
+	apiProy.HandleFunc("/{proyectoId}", DeleteProyecto).Methods("DELETE").Name("borrarProyecto")
 
 	return r
 }

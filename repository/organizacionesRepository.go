@@ -14,7 +14,7 @@ import (
 const organizacionCollection string = "organizaciones"
 
 //InsertOrganizacion Inserta una nueva instancia de Organizacion
-func InsertOrganizacion(organizacion models.Organizacion) string {
+func InsertOrganizacion(organizacion models.Organizacion) (string, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
@@ -26,12 +26,13 @@ func InsertOrganizacion(organizacion models.Organizacion) string {
 	resultado, err := col.InsertOne(ctx, organizacion)
 	if err != nil {
 		log.Fatal(err)
+		return "", err
 	}
 
 	ObjectID, _ := resultado.InsertedID.(primitive.ObjectID)
 
 	var result string = ObjectID.Hex()
-	return result
+	return result, nil
 }
 
 //GetAllOrganizaciones Obtiene todas las organizaciones
@@ -71,6 +72,24 @@ func GetOrganizacionByID(id string) *models.Organizacion {
 	}
 
 	return organizacion
+}
+
+//GetOrganizacionByQuery Consulta una organizacion por el parametro
+func GetOrganizacionByQuery(query map[string]string) (*models.Organizacion, error) {
+	col, ctx, cancel := GetCollection(organizacionCollection)
+	defer cancel()
+
+	var organizaciones *models.Organizacion
+
+	// filter := bson.M{"nombre": query["nombre"]}
+
+	err := col.FindOne(ctx, query).Decode(&organizaciones)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+	return organizaciones, nil
+
 }
 
 //DeleteOrganizacion Elimina una organizacion

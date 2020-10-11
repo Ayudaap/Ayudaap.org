@@ -60,7 +60,7 @@ func Createproyecto(w http.ResponseWriter, r *http.Request) {
 //GetProyectoByID Obtiene una proyecto por ID
 func GetProyectoByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	id := mux.Vars(r)["id"]
+	id := mux.Vars(r)["proyectoId"]
 	resultados := repo.GetProyectoByID(id)
 
 	if resultados == nil {
@@ -74,13 +74,13 @@ func GetProyectoByID(w http.ResponseWriter, r *http.Request) {
 //DeleteProyecto Elimina un proyecto
 func DeleteProyecto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	id := mux.Vars(r)["id"]
+	id := mux.Vars(r)["proyectoId"]
 
 	resultados, err := repo.DeleteProyecto(id)
 	if err != nil {
 		GetError(err, w)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 		json.NewEncoder(w).Encode(struct {
 			Procesado int `json:"procesado,omitempty"`
 		}{Procesado: resultados})
@@ -102,7 +102,7 @@ func UpsertProyecto(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		GetError(err, w)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(struct {
 			Procesado int64 `json:"procesado,omitempty"`
 		}{Procesado: resultados})

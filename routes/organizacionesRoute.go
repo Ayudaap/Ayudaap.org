@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -46,9 +47,9 @@ func CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	organizacionInsertada := make(chan string)
 	defer close(organizacionInsertada)
 
-	idInsertado := repo.InsertOrganizacion(organizacion)
+	idInsertado, err := repo.InsertOrganizacion(organizacion)
 
-	if len(idInsertado) <= 0 {
+	if len(idInsertado) <= 0 || err != nil {
 		err := errors.New("No se pudo insertar el objeto")
 		GetError(err, w)
 	} else {
@@ -73,6 +74,36 @@ func GetOrganizacionByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//GetOrganizacionByQuery Obtiene los parametros de la consulta
+func GetOrganizacionByQuery(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	keys, ok := r.URL.Query()["key"]
+
+	if !ok || len(keys[0]) < 1 {
+		json.NewEncoder(w).Encode(models.RespuestaGenerica{Mensaje: "No se encontraron datos a mostrar"})
+		return
+	}
+
+	parametros := make(map[string]string)
+
+	parametrosQuery := strings.Split(keys[0], ",")
+
+	for _, v := range parametrosQuery {
+		parametro := strings.Split(v, "=")
+		parametros[parametro[0]] = parametro[1]
+	}
+
+	resultados, err := repo.GetOrganizacionByQuery(parametros)
+	if err != nil {
+		err := errors.New("No se pudo localizar el objeto")
+		GetError(err, w)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resultados)
+	}
+}
+
 //DeleteOrganizacion Elimina una organizacion
 func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -82,15 +113,15 @@ func DeleteOrganizacion(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		GetError(err, w)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 		json.NewEncoder(w).Encode(struct {
 			Procesado int `json:"procesado,omitempty"`
 		}{Procesado: resultados})
 	}
 }
 
-//UpsertOrganizacion Actualiza un objeto
-func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
+//UpdateOrganizacion Actualiza un objeto
+func UpdateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	id := mux.Vars(r)["organizacionId"]
 
@@ -102,11 +133,11 @@ func UpsertOrganizacion(w http.ResponseWriter, r *http.Request) {
 		GetError(err, w)
 	}
 
-	resultados, err := repo.UpdateOrganizacion(id,&organizacion)
+	resultados, err := repo.UpdateOrganizacion(id, &organizacion)
 	if err != nil {
 		GetError(err, w)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(struct {
 			Procesado int64 `json:"procesado,omitempty"`
 		}{Procesado: resultados})
@@ -145,7 +176,7 @@ func UpdateDireccion(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		GetGenericMessage("No pudo ejecutar la operacion", http.StatusMethodNotAllowed, w)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(struct {
 			Procesado int64 `json:"procesado,omitempty"`
 		}{Procesado: resultados})
