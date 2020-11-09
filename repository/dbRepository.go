@@ -13,7 +13,7 @@ import (
 
 //MongoRepository Repositorio Singleton
 type MongoRepository struct {
-	db *mongo.Client
+	DB *mongo.Client
 }
 
 /* mongoCN objeto de conexión de la BD */
@@ -56,7 +56,7 @@ func conectarBD() {
 		return
 	}
 
-	instancia = &MongoRepository{db: cliente}
+	instancia = &MongoRepository{DB: cliente}
 }
 
 //ChequeoConnection Revisa si la conexion sigue activa
@@ -66,7 +66,7 @@ func ChequeoConnection() int {
 		instancia = GetInstance()
 	}
 
-	err := instancia.db.Ping(context.TODO(), nil)
+	err := instancia.DB.Ping(context.TODO(), nil)
 	if err != nil {
 		return 0
 	}
@@ -82,7 +82,7 @@ func GetCollection(collection string) (*mongo.Collection, context.Context, conte
 		instancia = GetInstance()
 	}
 
-	db := instancia.db.Database(dataBase)
+	db := instancia.DB.Database(dataBase)
 	col := db.Collection(collection)
 
 	ChequeoConnection()

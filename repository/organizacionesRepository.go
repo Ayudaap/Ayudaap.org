@@ -36,7 +36,7 @@ func InsertOrganizacion(organizacion models.Organizacion) (string, error) {
 }
 
 //GetAllOrganizaciones Obtiene todas las organizaciones
-func GetAllOrganizaciones() []models.Organizacion {
+func GetAllOrganizaciones() ([]models.Organizacion, error) {
 	var organizaciones []models.Organizacion
 
 	col, ctx, cancel := GetCollection(organizacionCollection)
@@ -44,34 +44,34 @@ func GetAllOrganizaciones() []models.Organizacion {
 
 	datos, err := col.Find(ctx, bson.D{})
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	for datos.Next(ctx) {
 		var organizacion models.Organizacion
 		err := datos.Decode(&organizacion)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		organizaciones = append(organizaciones, organizacion)
 	}
-	return organizaciones
+	return organizaciones, nil
 }
 
 //GetOrganizacionByID Obtiene una organizacion por Id
-func GetOrganizacionByID(id string) *models.Organizacion {
+func GetOrganizacionByID(id string) (models.Organizacion, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
 
-	var organizacion *models.Organizacion
+	var organizacion models.Organizacion
 	err := col.FindOne(ctx, bson.M{"_id": Oid}).Decode(&organizacion)
 	if err != nil {
-		return nil
+		return organizacion, err
 	}
 
-	return organizacion
+	return organizacion, nil
 }
 
 //GetOrganizacionByQuery Consulta una organizacion por el parametro
