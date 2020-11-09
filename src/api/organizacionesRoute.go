@@ -1,4 +1,4 @@
-package routes
+package api
 
 import (
 	"encoding/json"
@@ -9,16 +9,18 @@ import (
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"Ayudaap.org/models"
-	repo "Ayudaap.org/repository"
+	"Ayudaap.org/src/models"
 )
 
 //GetALlOrganizaciones Lista todas las organizaciones
 func GetALlOrganizaciones(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	resultados := repo.GetAllOrganizaciones()
+	resultados, err := models.GetAllOrganizaciones()
 
+	if err != nil {
+		RespondWithJSON(w, http.StatusOK, resultados)
+	}
 	if len(resultados) <= 0 {
 		GetGenericMessage("No se encontraron datos a mostrar", http.StatusOK, w)
 	} else {

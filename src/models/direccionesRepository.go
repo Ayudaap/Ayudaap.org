@@ -1,30 +1,30 @@
-package repository
+package models
 
 import (
-	"Ayudaap.org/models"
+	"Ayudaap.org/src/entities"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //GetDireccionByOrganizacionID Obtiene una Direccion por Id
-func GetDireccionByOrganizacionID(id string) (models.Direccion, error) {
+func GetDireccionByOrganizacionID(id string) (entities.Direccion, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
 
-	var organizacion *models.Organizacion
+	var organizacion *entities.Organizacion
 
 	err := col.FindOne(ctx, bson.M{"_id": Oid}).Decode(&organizacion)
 	if err != nil {
-		return models.Direccion{}, err
+		return entities.Direccion{}, err
 	}
 
 	return organizacion.Domicilio, nil
 }
 
 // UpdateDireccion Actualiza la direccion de una organizacion
-func UpdateDireccion(id string, direccion *models.Direccion) (int64, error) {
+func UpdateDireccion(id string, direccion *entities.Direccion) (int64, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 

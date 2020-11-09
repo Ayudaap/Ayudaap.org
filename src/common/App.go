@@ -1,9 +1,9 @@
-package app
+package common
 
 import (
 	"net/http"
 
-	"Ayudaap.org/routes"
+	ap "Ayudaap.org/src/api"
 )
 
 type api struct {
@@ -21,7 +21,7 @@ type server interface {
 func New() server {
 	a := &api{}
 
-	r := routes.GetHandler()
+	r := ap.GetHandler()
 	a.router = r
 	//TODO: Implementar extraccion por medio de archivo de configuracion
 	a.puerto = 8080

@@ -1,11 +1,11 @@
-package repository
+package models
 
 import (
 	"fmt"
 	"log"
 	"time"
 
-	"Ayudaap.org/models"
+	"Ayudaap.org/src/entities"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,11 +14,11 @@ import (
 const organizacionCollection string = "organizaciones"
 
 //InsertOrganizacion Inserta una nueva instancia de Organizacion
-func InsertOrganizacion(organizacion models.Organizacion) (string, error) {
+func InsertOrganizacion(organizacion entities.Organizacion) (string, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
-	organizacion.Auditoria = models.Auditoria{
+	organizacion.Auditoria = entities.Auditoria{
 		CreatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
 		UpdatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
 	}
@@ -36,8 +36,8 @@ func InsertOrganizacion(organizacion models.Organizacion) (string, error) {
 }
 
 //GetAllOrganizaciones Obtiene todas las organizaciones
-func GetAllOrganizaciones() ([]models.Organizacion, error) {
-	var organizaciones []models.Organizacion
+func GetAllOrganizaciones() ([]entities.Organizacion, error) {
+	var organizaciones []entities.Organizacion
 
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
@@ -48,7 +48,7 @@ func GetAllOrganizaciones() ([]models.Organizacion, error) {
 	}
 
 	for datos.Next(ctx) {
-		var organizacion models.Organizacion
+		var organizacion entities.Organizacion
 		err := datos.Decode(&organizacion)
 		if err != nil {
 			return nil, err
@@ -59,13 +59,13 @@ func GetAllOrganizaciones() ([]models.Organizacion, error) {
 }
 
 //GetOrganizacionByID Obtiene una organizacion por Id
-func GetOrganizacionByID(id string) (models.Organizacion, error) {
+func GetOrganizacionByID(id string) (entities.Organizacion, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
 
-	var organizacion models.Organizacion
+	var organizacion entities.Organizacion
 	err := col.FindOne(ctx, bson.M{"_id": Oid}).Decode(&organizacion)
 	if err != nil {
 		return organizacion, err
@@ -75,11 +75,11 @@ func GetOrganizacionByID(id string) (models.Organizacion, error) {
 }
 
 //GetOrganizacionByQuery Consulta una organizacion por el parametro
-func GetOrganizacionByQuery(query map[string]string) (*models.Organizacion, error) {
+func GetOrganizacionByQuery(query map[string]string) (*entities.Organizacion, error) {
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()
 
-	var organizaciones *models.Organizacion
+	var organizaciones *entities.Organizacion
 
 	// filter := bson.M{"nombre": query["nombre"]}
 
@@ -116,7 +116,7 @@ func DeleteOrganizacion(id string) (int, error) {
 }
 
 //UpdateOrganizacion Actualiza una organizacion retornando el total de elementos que se modificaron
-func UpdateOrganizacion(id string, organizacion *models.Organizacion) (int64, error) {
+func UpdateOrganizacion(id string, organizacion *entities.Organizacion) (int64, error) {
 
 	col, ctx, cancel := GetCollection(organizacionCollection)
 	defer cancel()

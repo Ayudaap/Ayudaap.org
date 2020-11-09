@@ -1,4 +1,4 @@
-package models
+package entities
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 

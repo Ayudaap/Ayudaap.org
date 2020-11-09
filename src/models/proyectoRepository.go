@@ -1,10 +1,10 @@
-package repository
+package models
 
 import (
 	"log"
 	"time"
 
-	"Ayudaap.org/models"
+	"Ayudaap.org/src/entities"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -13,11 +13,11 @@ import (
 const ProyectosCollection string = "proyectos"
 
 //InsertProyecto Inserta una nueva instancia de Proyecto
-func InsertProyecto(proyecto models.Proyecto) string {
+func InsertProyecto(proyecto entities.Proyecto) string {
 	col, ctx, cancel := GetCollection(ProyectosCollection)
 	defer cancel()
 
-	proyecto.Auditoria = models.Auditoria{
+	proyecto.Auditoria = entities.Auditoria{
 		CreatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
 		UpdatedAt: primitive.Timestamp{T: uint32(time.Now().Unix())},
 	}
@@ -34,8 +34,8 @@ func InsertProyecto(proyecto models.Proyecto) string {
 }
 
 //GetAllProyectos Obtiene todas los proyectos
-func GetAllProyectos() []models.Proyecto {
-	var proyectos []models.Proyecto
+func GetAllProyectos() []entities.Proyecto {
+	var proyectos []entities.Proyecto
 
 	col, ctx, cancel := GetCollection(ProyectosCollection)
 	defer cancel()
@@ -46,7 +46,7 @@ func GetAllProyectos() []models.Proyecto {
 	}
 
 	for datos.Next(ctx) {
-		var Proyecto models.Proyecto
+		var Proyecto entities.Proyecto
 		err := datos.Decode(&Proyecto)
 		if err != nil {
 			log.Fatal(err)
@@ -57,13 +57,13 @@ func GetAllProyectos() []models.Proyecto {
 }
 
 //GetProyectoByID Obtiene una Proyecto por Id
-func GetProyectoByID(id string) *models.Proyecto {
+func GetProyectoByID(id string) *entities.Proyecto {
 	col, ctx, cancel := GetCollection(ProyectosCollection)
 	defer cancel()
 
 	Oid, _ := primitive.ObjectIDFromHex(id)
 
-	var Proyecto *models.Proyecto
+	var Proyecto *entities.Proyecto
 	err := col.FindOne(ctx, bson.M{"_Id": Oid}).Decode(&Proyecto)
 	if err != nil {
 		return nil
@@ -96,7 +96,7 @@ func DeleteProyecto(id string) (int, error) {
 }
 
 //UpdateProyecto Actualiza una Proyecto retornando el total de elementos que se modificaron
-func UpdateProyecto(proyecto *models.Proyecto) (int64, error) {
+func UpdateProyecto(proyecto *entities.Proyecto) (int64, error) {
 
 	col, ctx, cancel := GetCollection(ProyectosCollection)
 	defer cancel()

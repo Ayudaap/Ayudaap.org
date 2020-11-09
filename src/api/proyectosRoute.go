@@ -1,4 +1,4 @@
-package routes
+package api
 
 import (
 	"encoding/json"
@@ -7,9 +7,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
-	"Ayudaap.org/models"
-	repo "Ayudaap.org/repository"
 )
 
 //GetALlProyectos Lista todas las Proyectos
