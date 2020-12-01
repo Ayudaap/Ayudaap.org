@@ -1,4 +1,4 @@
-package models
+package common
 
 import (
 	"context"
@@ -6,6 +6,8 @@ import (
 	"log"
 	"sync"
 	"time"
+
+	"github.com/spf13/viper"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,8 +23,7 @@ var instancia *MongoRepository
 var once sync.Once
 
 // Nombre de la base de datos
-//TODO: Implementar extraccion desde archivo de configuracion
-const dataBase string = "AyudaapDb"
+var dataBase string = viper.GetString("DB.DB_NAME")
 
 //GetInstance Obtiene acceso a una instancia de conexion hacia MongoDb
 func GetInstance() *MongoRepository {
@@ -33,15 +34,13 @@ func GetInstance() *MongoRepository {
 // ConectarDB inicia una conexión de hacia la BD
 //TODO: Implementar consulta desde archivo de configuracion
 func conectarBD() {
-	// host := os.Getenv("DB_HOST")
-	// port := os.Getenv("DB_PORT")
-	// user := os.Getenv("DB_USER")
-	// pass := os.Getenv("DB_PASSWORD")
+	host := viper.GetString("DB.DB_HOST")
+	port := viper.GetInt("DB.DB_PORT")
+	// user := viper.GetString("DB.DB_USER")
+	// pass := viper.GetString("DB.DB_PASSWORD")
 
 	//var cadenaConexion = fmt.Sprintf("mongodb+srv://%s:%s@%s:%s", user, pass, host, port)
-
-	//cadenaConexion := fmt.Sprintf("mongodb://%s:%s@%s:%s/", user, pass, host, port)
-	cadenaConexion := fmt.Sprintf("mongodb://localhost:27017")
+	cadenaConexion := fmt.Sprintf("mongodb://%s:%d", host, port)
 	clienteOpts := options.Client().ApplyURI(cadenaConexion)
 	cliente, err := mongo.Connect(context.TODO(), clienteOpts)
 
