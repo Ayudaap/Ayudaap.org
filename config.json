@@ -6,7 +6,7 @@
     "IdleTimeout": 60
   },
   "DB": {
-    "DB_NAME": "AyudaapDb",
+    "DB_NAME": "AyudaapDB",
     "DB_HOST": "localhost",
     "DB_PORT": 27017,
     "DB_USER": "",

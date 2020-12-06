@@ -1,4 +1,4 @@
-package common
+package database
 
 import (
 	"context"
@@ -23,7 +23,7 @@ var instancia *MongoRepository
 var once sync.Once
 
 // Nombre de la base de datos
-var dataBase string = viper.GetString("DB.DB_NAME")
+var dataBase string = "AyudaapDB"
 
 //GetInstance Obtiene acceso a una instancia de conexion hacia MongoDb
 func GetInstance() *MongoRepository {
@@ -72,7 +72,7 @@ func ChequeoConnection() int {
 	return 1
 }
 
-// GetCollection Obtienene la colecion y el contexto de trabaj
+// GetCollection Obtienene la colecion y el contexto de trabajo
 // `collection` Nombre de la conexion
 func GetCollection(collection string) (*mongo.Collection, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)

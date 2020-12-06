@@ -1,4 +1,4 @@
-package common
+package config
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 func Initconfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("../")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
