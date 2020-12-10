@@ -17,7 +17,7 @@ type OrganizacionModel struct{}
 const organizacionCollection = "organizacion"
 
 //InsertOne Inserta un nuevo registro en la base de datos
-func (p OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string, error) {
+func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string, error) {
 
 	organizacion.ID = primitive.NewObjectID()
 	if organizacion.Auditoria.CreatedAt == 0 {
@@ -37,7 +37,7 @@ func (p OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string
 }
 
 //FindAll Regresa todas las organizaciones
-func (p OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
+func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 	var organizaciones []entities.Organizacion
 
 	col, ctx, cancel := database.GetCollection(organizacionCollection)
@@ -59,4 +59,32 @@ func (p OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 	}
 
 	return organizaciones, nil
+}
+
+//FindByID Encuentra una organizacion por ID
+func (o OrganizacionModel) FindByID(id primitive.ObjectID) (entities.Organizacion, error) {
+	filter := bson.M{"_id": id.Hex()}
+
+	col, ctx, cancel := database.GetCollection(organizacionCollection)
+	defer cancel()
+	var organizacion entities.Organizacion
+
+	err := col.FindOne(ctx, filter).Decode(&organizacion)
+
+	return organizacion, err
+}
+
+//DeleteOne Borra un proyecto por
+func (o OrganizacionModel) DeleteOne(id primitive.ObjectID) error {
+
+	col, ctx, cancel := database.GetCollection(organizacionCollection)
+	defer cancel()
+
+	_, err := col.DeleteOne(ctx, bson.D{{"_id", id.Hex()}})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

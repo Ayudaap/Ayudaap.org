@@ -61,3 +61,52 @@ func (p ProyectoModel) FindAll() ([]entities.Proyecto, error) {
 
 	return proyectos, nil
 }
+
+//FindByID Encuentra una proyecto por ID
+func (p ProyectoModel) FindByID(ID string) (entities.Proyecto, error) {
+
+	oID, err := primitive.ObjectIDFromHex(ID)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	filter := bson.M{"_Id": oID}
+
+	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	defer cancel()
+	var proyecto entities.Proyecto
+
+	err = col.FindOne(ctx, filter).Decode(&proyecto)
+
+	return proyecto, err
+}
+
+//DeleteOne Borra un proyecto por
+func (p ProyectoModel) DeleteOne(ID string) error {
+
+	oID, _ := primitive.ObjectIDFromHex(ID)
+	filter := bson.M{"_Id": oID}
+
+	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	defer cancel()
+
+	_, err := col.DeleteOne(ctx, filter)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Purge Purga el proyecto
+func (p ProyectoModel) Purge() error {
+	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	defer cancel()
+
+	err := col.Drop(ctx)
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
+}

@@ -7,14 +7,33 @@ import (
 
 	"Ayudaap.org/src/entities"
 	"Ayudaap.org/src/models"
+	"github.com/gorilla/mux"
 )
 
 //ProyectoAPI Api de proyectos
 type ProyectoAPI struct{}
 
+//CreateProyecto Crea un nuevo proyecto
+func (p ProyectoAPI) CreateProyecto(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var proyecto entities.Proyecto
+
+	if err := json.NewDecoder(r.Body).Decode(&proyecto); err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+	}
+
+	resultados, err := models.ProyectoModel{}.InsertOne(proyecto)
+	if err != nil {
+		log.Fatal(err.Error())
+		respondWithError(w, http.StatusBadRequest, "No se pudo procesar la peticion")
+	} else {
+		respondWithJSON(w, http.StatusCreated, resultados)
+	}
+}
+
 //GetALlProyectos Lista todas las Proyectos
 func (p ProyectoAPI) GetALlProyectos(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
 	resultados, err := models.ProyectoModel{}.FindAll()
 
@@ -30,22 +49,27 @@ func (p ProyectoAPI) GetALlProyectos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//CreateProyecto Crea un nuevo proyecto
-func (p ProyectoAPI) CreateProyecto(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	defer r.Body.Close()
+//GetProyectoByID Obtiene un proyecto por el ID
+func (p ProyectoAPI) GetProyectoByID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-	var proyecto entities.Proyecto
-
-	if err := json.NewDecoder(r.Body).Decode(&proyecto); err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-	}
-
-	resultados, err := models.ProyectoModel{}.InsertOne(proyecto)
+	resultados, err := models.ProyectoModel{}.FindByID(id)
 	if err != nil {
-		log.Fatal(err.Error())
-		respondWithError(w, http.StatusBadRequest, "No se pudo procesar la peticion")
+		respondWithError(w, http.StatusNotFound, err.Error())
 	} else {
-		respondWithJSON(w, http.StatusCreated, resultados)
+		respondWithJSON(w, http.StatusOK, resultados)
+	}
+}
+
+//PurgarCollection Purga la coleccion de la base de datos
+func (p ProyectoAPI) PurgarCollection(w http.ResponseWriter, r *http.Request) {
+
+	err := models.ProyectoModel{}.Purge()
+
+	if err != nil {
+		respondWithJSON(w, http.StatusGone, "")
+	} else {
+		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 }

@@ -22,6 +22,8 @@ func GetRouter() http.Handler {
 	//apiProy Rutas para los proyectos
 	apiProy := apiRoute.PathPrefix("/proyectos").Subrouter()
 	apiProy.HandleFunc("/", api.ProyectoAPI{}.GetALlProyectos).Name("getALlProyectos").Methods("GET")
+	apiProy.HandleFunc("/purgar", api.ProyectoAPI{}.PurgarCollection).Name("purgarProyectos").Methods("GET")
+	apiProy.HandleFunc("/{id}", api.ProyectoAPI{}.GetProyectoByID).Name("getProyecto").Methods("GET")
 	apiProy.HandleFunc("/", api.ProyectoAPI{}.CreateProyecto).Name("crearProyecto").Methods("POST")
 
 	//apiOrg Rutas para las Organizaciones
