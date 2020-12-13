@@ -13,8 +13,8 @@ import (
 //OrganizacionModel Tipo de organizacion
 type OrganizacionModel struct{}
 
-//organizacionCollection Nombre de la conexion
-const organizacionCollection = "organizacion"
+//ORGANIZACIONCOLLECTION Nombre de la conexion
+const ORGANIZACIONCOLLECTION = "organizacion"
 
 //InsertOne Inserta un nuevo registro en la base de datos
 func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string, error) {
@@ -24,7 +24,7 @@ func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string
 		organizacion.Auditoria = database.GetAuditoria("NoName")
 	}
 
-	col, ctx, cancel := database.GetCollection(organizacionCollection)
+	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 
 	resultado, err := col.InsertOne(ctx, organizacion)
@@ -40,7 +40,7 @@ func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string
 func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 	var organizaciones []entities.Organizacion
 
-	col, ctx, cancel := database.GetCollection(organizacionCollection)
+	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 
 	datos, err := col.Find(ctx, bson.M{})
@@ -65,7 +65,7 @@ func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 func (o OrganizacionModel) FindByID(id primitive.ObjectID) (entities.Organizacion, error) {
 	filter := bson.M{"_id": id.Hex()}
 
-	col, ctx, cancel := database.GetCollection(organizacionCollection)
+	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 	var organizacion entities.Organizacion
 
@@ -77,7 +77,7 @@ func (o OrganizacionModel) FindByID(id primitive.ObjectID) (entities.Organizacio
 //DeleteOne Borra un proyecto por
 func (o OrganizacionModel) DeleteOne(id primitive.ObjectID) error {
 
-	col, ctx, cancel := database.GetCollection(organizacionCollection)
+	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 
 	_, err := col.DeleteOne(ctx, bson.D{{"_id", id.Hex()}})

@@ -13,8 +13,8 @@ import (
 //ProyectoModel Tipo de proyecto
 type ProyectoModel struct{}
 
-//PROYECTOS_proyectosCollectionCOLLECCION Nombre de la conexion
-const proyectosCollection = "proyectos"
+//PROYECTOSCOLLECTION Nombre de la conexion
+const PROYECTOSCOLLECTION = "proyectos"
 
 //InsertOne Inserta un nuevo registro en la base de datos
 func (p ProyectoModel) InsertOne(proyecto entities.Proyecto) (string, error) {
@@ -25,7 +25,7 @@ func (p ProyectoModel) InsertOne(proyecto entities.Proyecto) (string, error) {
 		proyecto.Auditoria = database.GetAuditoria("NoName")
 	}
 
-	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
 	defer cancel()
 
 	resultado, err := col.InsertOne(ctx, proyecto)
@@ -41,7 +41,7 @@ func (p ProyectoModel) InsertOne(proyecto entities.Proyecto) (string, error) {
 func (p ProyectoModel) FindAll() ([]entities.Proyecto, error) {
 	var proyectos []entities.Proyecto
 
-	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
 	defer cancel()
 
 	datos, err := col.Find(ctx, bson.M{})
@@ -69,27 +69,24 @@ func (p ProyectoModel) FindByID(ID string) (entities.Proyecto, error) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	filter := bson.M{"_Id": oID}
 
-	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
 	defer cancel()
 	var proyecto entities.Proyecto
 
-	err = col.FindOne(ctx, filter).Decode(&proyecto)
+	err = col.FindOne(ctx, bson.M{"_Id": oID}).Decode(&proyecto)
 
 	return proyecto, err
 }
 
-//DeleteOne Borra un proyecto por
+//DeleteOne Borra un proyecto por ID
 func (p ProyectoModel) DeleteOne(ID string) error {
 
 	oID, _ := primitive.ObjectIDFromHex(ID)
-	filter := bson.M{"_Id": oID}
-
-	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
 	defer cancel()
 
-	_, err := col.DeleteOne(ctx, filter)
+	_, err := col.DeleteOne(ctx, bson.M{"_Id": oID})
 
 	if err != nil {
 		return err
@@ -98,15 +95,30 @@ func (p ProyectoModel) DeleteOne(ID string) error {
 	return nil
 }
 
+//Udate Actualiza un objeto
+func (p ProyectoModel) Udate(proyecto entities.Proyecto) (int64, error) {
+
+	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
+	defer cancel()
+
+	result, err := col.UpdateOne(ctx, bson.M{"_Id": proyecto.ID}, bson.M{"$set": proyecto})
+	if err != nil {
+		return 0, nil
+	}
+
+	return result.ModifiedCount, nil
+
+}
+
 //Purge Purga el proyecto
 func (p ProyectoModel) Purge() error {
-	col, ctx, cancel := database.GetCollection(proyectosCollection)
+	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
 	defer cancel()
 
 	err := col.Drop(ctx)
 	if err != nil {
 		return err
-	} else {
-		return nil
 	}
+
+	return nil
 }
