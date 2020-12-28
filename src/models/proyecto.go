@@ -50,6 +50,7 @@ func (p ProyectoModel) FindAll() ([]entities.Proyecto, error) {
 		return nil, err
 	}
 
+	defer datos.Close(ctx)
 	for datos.Next(ctx) {
 		var proyecto entities.Proyecto
 		err := datos.Decode(&proyecto)

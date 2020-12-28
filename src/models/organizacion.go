@@ -14,7 +14,7 @@ import (
 type OrganizacionModel struct{}
 
 //ORGANIZACIONCOLLECTION Nombre de la conexion
-const ORGANIZACIONCOLLECTION = "organizacion"
+const ORGANIZACIONCOLLECTION = "organizaciones"
 
 //InsertOne Inserta un nuevo registro en la base de datos
 func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string, error) {
@@ -49,6 +49,7 @@ func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 		return nil, err
 	}
 
+	defer datos.Close(ctx)
 	for datos.Next(ctx) {
 		var organizacion entities.Organizacion
 		err := datos.Decode(&organizacion)

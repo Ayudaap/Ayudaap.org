@@ -42,6 +42,7 @@ func (g GenericDB) FindAll() ([]interface{}, error) {
 		return nil, err
 	}
 
+	defer datos.Close(ctx)
 	for datos.Next(ctx) {
 		var registro interface{}
 		err := datos.Decode(&registro)
