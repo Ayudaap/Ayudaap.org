@@ -19,7 +19,10 @@ const ORGANIZACIONCOLLECTION = "organizaciones"
 //InsertOne Inserta un nuevo registro en la base de datos
 func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string, error) {
 
-	organizacion.ID = primitive.NewObjectID()
+	if organizacion.ID.IsZero() {
+		organizacion.ID = primitive.NewObjectID()
+	}
+
 	if organizacion.Auditoria.CreatedAt == 0 {
 		organizacion.Auditoria = database.GetAuditoria("NoName")
 	}
@@ -50,13 +53,10 @@ func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 	}
 
 	defer datos.Close(ctx)
-	for datos.Next(ctx) {
-		var organizacion entities.Organizacion
-		err := datos.Decode(&organizacion)
-		if err != nil {
-			log.Fatal(err)
-		}
-		organizaciones = append(organizaciones, organizacion)
+
+	err = datos.All(ctx, &organizaciones)
+	if err != nil {
+		return nil, err
 	}
 
 	return organizaciones, nil
@@ -81,7 +81,7 @@ func (o OrganizacionModel) DeleteOne(id primitive.ObjectID) error {
 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 
-	_, err := col.DeleteOne(ctx, bson.D{{"_id", id.Hex()}})
+	_, err := col.DeleteOne(ctx, bson.M{"_id": id.Hex()})
 
 	if err != nil {
 		return err
@@ -89,3 +89,10 @@ func (o OrganizacionModel) DeleteOne(id primitive.ObjectID) error {
 
 	return nil
 }
+
+// func (o OrganizacionModel) GetOrganizacionByNombre(nombre string) (entities.Organizacion, error) {
+// 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
+// 	defer cancel()
+
+// 	_, err := col.Find
+// }

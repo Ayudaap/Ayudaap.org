@@ -13,7 +13,7 @@ import (
 type OrganizacionAPI struct{}
 
 //GetALlorganizaciones Lista todas las organizaciones
-func (p OrganizacionAPI) GetALlorganizaciones(w http.ResponseWriter, r *http.Request) {
+func (o OrganizacionAPI) GetALlorganizaciones(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	resultados, err := models.OrganizacionModel{}.FindAll()
@@ -31,7 +31,7 @@ func (p OrganizacionAPI) GetALlorganizaciones(w http.ResponseWriter, r *http.Req
 }
 
 //CreateOrganizacion Crea un nuevo Organizacion
-func (p OrganizacionAPI) CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
+func (o OrganizacionAPI) CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	defer r.Body.Close()
 
@@ -49,3 +49,8 @@ func (p OrganizacionAPI) CreateOrganizacion(w http.ResponseWriter, r *http.Reque
 		respondWithJSON(w, http.StatusCreated, resultados)
 	}
 }
+
+// func (o OrganizacionAPI) GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
+// 	defer r.Body.Close()
+// }
