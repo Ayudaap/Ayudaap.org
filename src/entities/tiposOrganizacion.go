@@ -1,4 +1,4 @@
-package models
+package entities
 
 // Tipo de organizacion
 type TipoOrganizacion int

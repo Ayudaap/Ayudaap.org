@@ -1,8 +1,6 @@
-package models
+package entities
 
 import (
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,10 +15,10 @@ type Proyecto struct {
 	Auditoria Auditoria          `json:"auditoria,omitempty" bson:"auditoria"`
 
 	//TODO: Mover a modelo de Convocatoria
-	Actividad             string    `json:"actividad,omitempty" bson:"actividad"`
-	VoluntariosRequeridos int       `json:"voluntariosRequeridos" bson:"voluntariosRequeridos"`
-	CapacidadesRequeridas string    `json:"capacidadesRequeridas,omitempty" bson:"capacidadesRequeridas"`
-	Costo                 float32   `json:"costo,omitempty" bson:"costo"`
-	Inicio                time.Time `json:"fechaInicio,omitempty" bson:"fechaInicio"`
-	Fin                   time.Time `json:"fechaFin,omitempty" bson:"fechaFin"`
+	Actividad             string  `json:"actividad,omitempty" bson:"actividad"`
+	VoluntariosRequeridos int     `json:"voluntariosRequeridos" bson:"voluntariosRequeridos"`
+	CapacidadesRequeridas string  `json:"capacidadesRequeridas,omitempty" bson:"capacidadesRequeridas"`
+	Costo                 float32 `json:"costo,omitempty" bson:"costo"`
+	Inicio                int64   `json:"fechaInicio,omitempty" bson:"fechaInicio"`
+	Fin                   int64   `json:"fechaFin,omitempty" bson:"fechaFin"`
 }

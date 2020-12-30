@@ -1,4 +1,4 @@
-package models
+package entities
 
 // Modelo que representa un error Json
 type ErrorResponse struct {
