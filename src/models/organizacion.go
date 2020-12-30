@@ -63,25 +63,32 @@ func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 }
 
 //FindByID Encuentra una organizacion por ID
-func (o OrganizacionModel) FindByID(id primitive.ObjectID) (entities.Organizacion, error) {
-	filter := bson.M{"_id": id.Hex()}
+func (o OrganizacionModel) FindByID(ID string) (entities.Organizacion, error) {
+	oID, err := primitive.ObjectIDFromHex(ID)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 	var organizacion entities.Organizacion
 
-	err := col.FindOne(ctx, filter).Decode(&organizacion)
+	err = col.FindOne(ctx, bson.M{"_id": oID}).Decode(&organizacion)
 
 	return organizacion, err
 }
 
 //DeleteOne Borra un proyecto por
-func (o OrganizacionModel) DeleteOne(id primitive.ObjectID) error {
+func (o OrganizacionModel) DeleteOne(ID string) error {
+	oID, err := primitive.ObjectIDFromHex(ID)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
 	defer cancel()
 
-	_, err := col.DeleteOne(ctx, bson.M{"_id": id.Hex()})
+	_, err = col.DeleteOne(ctx, bson.M{"_id": oID})
 
 	if err != nil {
 		return err
@@ -90,9 +97,12 @@ func (o OrganizacionModel) DeleteOne(id primitive.ObjectID) error {
 	return nil
 }
 
-// func (o OrganizacionModel) GetOrganizacionByNombre(nombre string) (entities.Organizacion, error) {
-// 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
-// 	defer cancel()
+//getID Convierte un string en ObjectID
+func getID(ID string) (primitive.ObjectID, error) {
+	oID, err := primitive.ObjectIDFromHex(ID)
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
 
-// 	_, err := col.Find
-// }
+	return oID, nil
+}

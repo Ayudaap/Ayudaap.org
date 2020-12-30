@@ -23,10 +23,8 @@ func init() {
 
 func TestInsertOneOrganizacion(t *testing.T) {
 
-	id, _ := primitive.ObjectIDFromHex("5fe9889d8dbcbd4f4e5b5f45")
-
 	organizacionEsperado := entities.Organizacion{
-		ID:     id,
+		ID:     primitive.NewObjectID(),
 		Nombre: faker.Company().Name(),
 		Banner: faker.Avatar().String(),
 		Tipo:   entities.TipoOrganizacion(faker.RandomInt(0, 4)),
@@ -81,7 +79,12 @@ func TestGetAllOrganizacion(t *testing.T) {
 
 func TestGetOneOrganizacion(t *testing.T) {
 
-	want, _ := primitive.ObjectIDFromHex("5fe9889d8dbcbd4f4e5b5f45")
+	organizaciones, err := OrganizacionModel{}.FindAll()
+	if err != nil {
+		t.Skip()
+	}
+
+	want := organizaciones[0].ID.Hex()
 	got, err := OrganizacionModel{}.FindByID(want)
 
 	if err != nil {
@@ -89,7 +92,22 @@ func TestGetOneOrganizacion(t *testing.T) {
 	}
 
 	if got.Nombre == "" {
-		t.Errorf("No se logro ejecutar la consulta, want: %s got: %s", want.Hex(), got.ID.Hex())
+		t.Errorf("No se logro ejecutar la consulta, want: %s got: %s", want, got.ID.Hex())
 	}
 
+}
+
+func TestDeleteOrganizacion(t *testing.T) {
+	organizaciones, err := OrganizacionModel{}.FindAll()
+	if err != nil {
+		t.Skip()
+	}
+
+	toDelete := organizaciones[0].ID.Hex()
+
+	err = nil
+	err = OrganizacionModel{}.DeleteOne(toDelete)
+	if err != nil {
+		t.Errorf("No se pudo borrar el registro:  %s", err.Error())
+	}
 }

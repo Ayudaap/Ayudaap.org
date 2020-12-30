@@ -7,6 +7,7 @@ import (
 
 	"Ayudaap.org/src/entities"
 	"Ayudaap.org/src/models"
+	"github.com/gorilla/mux"
 )
 
 //OrganizacionAPI API de organizacion
@@ -26,6 +27,18 @@ func (o OrganizacionAPI) GetALlorganizaciones(w http.ResponseWriter, r *http.Req
 
 	} else {
 		w.WriteHeader(http.StatusOK)
+		respondWithJSON(w, http.StatusOK, resultados)
+	}
+}
+
+func (o OrganizacionAPI) GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	resultados, err := models.OrganizacionModel{}.FindByID(id)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, err.Error())
+	} else {
 		respondWithJSON(w, http.StatusOK, resultados)
 	}
 }
