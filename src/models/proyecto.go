@@ -110,16 +110,3 @@ func (p ProyectoModel) Udate(proyecto entities.Proyecto) (int64, error) {
 	return result.ModifiedCount, nil
 
 }
-
-//Purge Purga el proyecto
-func (p ProyectoModel) Purge() error {
-	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
-	defer cancel()
-
-	err := col.Drop(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}

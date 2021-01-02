@@ -2,6 +2,7 @@ package models
 
 import (
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -48,7 +49,7 @@ func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 
 	datos, err := col.Find(ctx, bson.M{})
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 		return nil, err
 	}
 
@@ -66,7 +67,8 @@ func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
 func (o OrganizacionModel) FindByID(ID string) (entities.Organizacion, error) {
 	oID, err := primitive.ObjectIDFromHex(ID)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
+		return entities.Organizacion{}, err
 	}
 
 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
@@ -78,11 +80,31 @@ func (o OrganizacionModel) FindByID(ID string) (entities.Organizacion, error) {
 	return organizacion, err
 }
 
+//Update Actualiza un objeto en la base de datos
+func (o OrganizacionModel) Update(organizacion *entities.Organizacion) (int64, error) {
+
+	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
+	defer cancel()
+
+	//TODO: Cambiar por codigo el usuario que lo modifica
+	organizacion.Auditoria.ModificadoPor = "Testing"
+	organizacion.Auditoria.UpdatedAt = time.Now().Unix()
+
+	res, err := col.UpdateOne(ctx, bson.M{"_id": organizacion.ID}, bson.M{"$set": organizacion})
+
+	if err != nil {
+		return 0, err
+	}
+
+	return res.MatchedCount, nil
+
+}
+
 //DeleteOne Borra un proyecto por
 func (o OrganizacionModel) DeleteOne(ID string) error {
 	oID, err := primitive.ObjectIDFromHex(ID)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err.Error())
 	}
 
 	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)

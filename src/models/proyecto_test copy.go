@@ -21,21 +21,13 @@ func init() {
 	rand.Seed(50)
 }
 
-func TestInsertOneOrganizacion(t *testing.T) {
+func TestInsertOneProyecto(t *testing.T) {
 
-	organizacionEsperado := entities.Organizacion{
-		ID:     primitive.NewObjectID(),
-		Nombre: faker.Company().Name(),
-		Banner: faker.Avatar().String(),
-		Tipo:   entities.TipoOrganizacion(faker.RandomInt(0, 4)),
-		Domicilio: entities.Direccion{
-			ID:             primitive.NewObjectID(),
-			Calle:          faker.Address().StreetName(),
-			NumeroExterior: faker.Address().BuildingNumber(),
-			CodigoPostal:   faker.Address().Postcode(),
-			Colonia:        faker.Address().City(),
-			Estado:         faker.Address().State(),
-		},
+	proyectoEsperado := entities.Proyecto{
+		ID:        primitive.NewObjectID(),
+		Nombre:    faker.Company().Name(),
+		Objetivo: faker.
+		Banner:    faker.Avatar().String(),
 		Auditoria: database.GetAuditoria(faker.Internet().UserName()),
 	}
 
@@ -47,7 +39,7 @@ func TestInsertOneOrganizacion(t *testing.T) {
 			principal = true
 		}
 
-		organizacionEsperado.Domicilio.Directorio = append(organizacionEsperado.Domicilio.Directorio, entities.Directorio{
+		proyectoEsperado.Domicilio.Directorio = append(proyectoEsperado.Domicilio.Directorio, entities.Directorio{
 			Alias:             fmt.Sprintf("%s %s", faker.Name().Prefix(), faker.Name().LastName()),
 			CorreoElectronico: faker.Internet().Email(),
 			Nombre:            faker.Name().Name(),
@@ -57,7 +49,7 @@ func TestInsertOneOrganizacion(t *testing.T) {
 		})
 	}
 
-	recibido, err := OrganizacionModel{}.InsertOne(organizacionEsperado)
+	recibido, err := OrganizacionModel{}.InsertOne(proyectoEsperado)
 	if err != nil {
 		t.Errorf("No se pudo insertar el registro \n%s", err.Error())
 	} else if "" == recibido {
