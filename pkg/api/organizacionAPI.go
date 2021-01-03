@@ -8,6 +8,7 @@ import (
 	"Ayudaap.org/src/entities"
 	"Ayudaap.org/src/models"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //OrganizacionAPI API de organizacion
@@ -15,8 +16,6 @@ type OrganizacionAPI struct{}
 
 //GetALlorganizaciones Lista todas las organizaciones
 func (o OrganizacionAPI) GetALlorganizaciones(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	resultados, err := models.OrganizacionModel{}.FindAll()
 
 	if err != nil {
@@ -31,7 +30,8 @@ func (o OrganizacionAPI) GetALlorganizaciones(w http.ResponseWriter, r *http.Req
 	}
 }
 
-func (o OrganizacionAPI) GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
+//GetOrganizacionByID Obtiene una organizacion por ID
+func (o OrganizacionAPI) GetOrganizacionByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -45,25 +45,32 @@ func (o OrganizacionAPI) GetOrganizacionById(w http.ResponseWriter, r *http.Requ
 
 //CreateOrganizacion Crea un nuevo Organizacion
 func (o OrganizacionAPI) CreateOrganizacion(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	defer r.Body.Close()
 
 	var organizacion entities.Organizacion
 
 	if err := json.NewDecoder(r.Body).Decode(&organizacion); err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
-	}
-
-	resultados, err := models.OrganizacionModel{}.InsertOne(organizacion)
-	if err != nil {
-		log.Fatal(err.Error())
-		respondWithError(w, http.StatusBadRequest, "No se pudo procesar la peticion")
 	} else {
-		respondWithJSON(w, http.StatusCreated, resultados)
+		if organizacion.ID.IsZero() {
+			organizacion.ID = primitive.NewObjectID()
+		}
+
+		if organizacion.Domicilio.ID.IsZero() {
+			organizacion.Domicilio.ID = primitive.NewObjectID()
+		}
+
+		for i := range organizacion.Domicilio.Directorio {
+			if organizacion.Domicilio.Directorio[i].ID.IsZero() {
+				organizacion.Domicilio.Directorio[i].ID = primitive.NewObjectID()
+			}
+		}
+		resultados, err := models.OrganizacionModel{}.InsertOne(organizacion)
+		if err != nil {
+			log.Fatal(err.Error())
+			respondWithError(w, http.StatusBadRequest, "No se pudo procesar la peticion")
+		} else {
+			respondWithJSON(w, http.StatusCreated, resultados)
+		}
 	}
 }
-
-// func (o OrganizacionAPI) GetOrganizacionById(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	defer r.Body.Close()
-// }

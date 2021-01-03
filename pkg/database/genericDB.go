@@ -30,8 +30,7 @@ func (g GenericDB) InsertOne(registro interface{}) (string, error) {
 }
 
 //FindAll Regresa todos los registros
-func (g GenericDB) FindAll() ([]interface{}, error) {
-	var registros []interface{}
+func (g GenericDB) FindAll(resultados interface{}) error {
 
 	col, ctx, cancel := GetCollection(g.CollectionName)
 	defer cancel()
@@ -39,24 +38,19 @@ func (g GenericDB) FindAll() ([]interface{}, error) {
 	datos, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		log.Fatal(err.Error())
-		return nil, err
+		return err
 	}
 
-	defer datos.Close(ctx)
-	for datos.Next(ctx) {
-		var registro interface{}
-		err := datos.Decode(&registro)
-		if err != nil {
-			log.Fatal(err)
-		}
-		registros = append(registros, registro)
+	err = datos.All(ctx, resultados)
+	if err != nil {
+		return err
 	}
 
-	return registros, nil
+	return nil
 }
 
 //FindByID Encuentra una registro por ID
-func (g GenericDB) FindByID(ID string) (interface{}, error) {
+func (g GenericDB) FindByID(ID string, resultado interface{}) error {
 
 	oID, err := primitive.ObjectIDFromHex(ID)
 	if err != nil {
@@ -65,11 +59,13 @@ func (g GenericDB) FindByID(ID string) (interface{}, error) {
 
 	col, ctx, cancel := GetCollection(g.CollectionName)
 	defer cancel()
-	var registro interface{}
 
-	err = col.FindOne(ctx, bson.M{"_Id": oID}).Decode(&registro)
+	err = col.FindOne(ctx, bson.M{"_id": oID}).Decode(resultado)
+	if err != nil {
+		log.Println(err.Error())
+	}
 
-	return registro, err
+	return err
 }
 
 //DeleteOne Borra un registro por ID
@@ -79,7 +75,7 @@ func (g GenericDB) DeleteOne(ID string) error {
 	col, ctx, cancel := GetCollection(g.CollectionName)
 	defer cancel()
 
-	_, err := col.DeleteOne(ctx, bson.M{"_Id": oID})
+	_, err := col.DeleteOne(ctx, bson.M{"_id": oID})
 
 	if err != nil {
 		return err
@@ -94,7 +90,7 @@ func (g GenericDB) Udate(ID string, registro interface{}) (int64, error) {
 	col, ctx, cancel := GetCollection(g.CollectionName)
 	defer cancel()
 
-	result, err := col.UpdateOne(ctx, bson.M{"_Id": ID}, bson.M{"$set": registro})
+	result, err := col.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{"$set": registro})
 	if err != nil {
 		return 0, nil
 	}

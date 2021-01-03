@@ -62,14 +62,14 @@ func (p ProyectoAPI) GetProyectoByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//PurgarCollection Purga la coleccion de la base de datos
-func (p ProyectoAPI) PurgarCollection(w http.ResponseWriter, r *http.Request) {
+// //PurgarCollection Purga la coleccion de la base de datos
+// func (p ProyectoAPI) PurgarCollection(w http.ResponseWriter, r *http.Request) {
 
-	err := models.ProyectoModel{}.Purge()
+// 	err := models.ProyectoModel{}.Purge()
 
-	if err != nil {
-		respondWithJSON(w, http.StatusGone, "")
-	} else {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-	}
-}
+// 	if err != nil {
+// 		respondWithJSON(w, http.StatusGone, "")
+// 	} else {
+// 		respondWithError(w, http.StatusBadRequest, err.Error())
+// 	}
+// }

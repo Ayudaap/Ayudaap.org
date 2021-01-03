@@ -17,67 +17,45 @@ type OrganizacionModel struct{}
 //ORGANIZACIONCOLLECTION Nombre de la conexion
 const ORGANIZACIONCOLLECTION = "organizaciones"
 
+var db database.GenericDB
+
+func init() {
+	db = database.GenericDB{CollectionName: ORGANIZACIONCOLLECTION}
+}
+
 //InsertOne Inserta un nuevo registro en la base de datos
 func (o OrganizacionModel) InsertOne(organizacion entities.Organizacion) (string, error) {
 
-	if organizacion.ID.IsZero() {
-		organizacion.ID = primitive.NewObjectID()
-	}
-
-	if organizacion.Auditoria.CreatedAt == 0 {
-		organizacion.Auditoria = database.GetAuditoria("NoName")
-	}
-
-	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
-	defer cancel()
-
-	resultado, err := col.InsertOne(ctx, organizacion)
+	id, err := db.InsertOne(organizacion)
 	if err != nil {
 		return "", err
 	}
 
-	ObjectID, _ := resultado.InsertedID.(primitive.ObjectID)
-	return ObjectID.Hex(), nil
+	return id, nil
 }
 
 //FindAll Regresa todas las organizaciones
 func (o OrganizacionModel) FindAll() ([]entities.Organizacion, error) {
-	var organizaciones []entities.Organizacion
+	var resultados []entities.Organizacion
+	err := db.FindAll(&resultados)
 
-	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
-	defer cancel()
-
-	datos, err := col.Find(ctx, bson.M{})
-	if err != nil {
-		log.Println(err.Error())
-		return nil, err
-	}
-
-	defer datos.Close(ctx)
-
-	err = datos.All(ctx, &organizaciones)
 	if err != nil {
 		return nil, err
 	}
 
-	return organizaciones, nil
+	return resultados, nil
 }
 
 //FindByID Encuentra una organizacion por ID
 func (o OrganizacionModel) FindByID(ID string) (entities.Organizacion, error) {
-	oID, err := primitive.ObjectIDFromHex(ID)
+	var organizacion entities.Organizacion
+	err := db.FindByID(ID, &organizacion)
+
 	if err != nil {
-		log.Println(err.Error())
-		return entities.Organizacion{}, err
+		return organizacion, err
 	}
 
-	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
-	defer cancel()
-	var organizacion entities.Organizacion
-
-	err = col.FindOne(ctx, bson.M{"_id": oID}).Decode(&organizacion)
-
-	return organizacion, err
+	return organizacion, nil
 }
 
 //Update Actualiza un objeto en la base de datos

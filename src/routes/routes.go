@@ -28,7 +28,7 @@ func GetRouter() http.Handler {
 	//apiOrg Rutas para las Organizaciones
 	apiOrg := apiRoute.PathPrefix("/organizaciones").Subrouter()
 	apiOrg.HandleFunc("/", api.OrganizacionAPI{}.GetALlorganizaciones).Name("getALlOrganizaciones").Methods("GET")
-	apiOrg.HandleFunc("/{id}", api.OrganizacionAPI{}.GetOrganizacionById).Name("getALlOrganizaciones").Methods("GET")
+	apiOrg.HandleFunc("/{id}", api.OrganizacionAPI{}.GetOrganizacionByID).Name("getALlOrganizaciones").Methods("GET")
 	apiOrg.HandleFunc("/", api.OrganizacionAPI{}.CreateOrganizacion).Name("crearProyecto").Methods("POST")
 
 	return r
