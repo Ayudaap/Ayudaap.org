@@ -126,7 +126,7 @@ func TestUpdateOrganizacion(t *testing.T) {
 	toUpdate.Nombre = "Prueba 1"
 	toUpdate.Tipo = entities.OrganizacionNoGubernamental
 
-	modificdo, err := OrganizacionModel{}.Update(&toUpdate)
+	modificdo, err := OrganizacionModel{}.Update(toUpdate)
 	if err != nil {
 		t.Skip()
 	}
@@ -151,7 +151,7 @@ func TestUpdateOrganizacionDireccion(t *testing.T) {
 	toUpdate.Domicilio.Calle = "Prueba Modificacion"
 	toUpdate.Tipo = entities.OrganizacionNoGubernamental
 
-	modificdo, err := OrganizacionModel{}.Update(&toUpdate)
+	modificdo, err := OrganizacionModel{}.Update(toUpdate)
 	if err != nil {
 		t.Skip()
 	}
@@ -176,7 +176,7 @@ func TestUpdateOrganizacionDirectorio(t *testing.T) {
 	toUpdate.Domicilio.Directorio[0].Alias = "Prueba de modificacion"
 	toUpdate.Tipo = entities.OrganizacionNoGubernamental
 
-	modificdo, err := OrganizacionModel{}.Update(&toUpdate)
+	modificdo, err := OrganizacionModel{}.Update(toUpdate)
 	if err != nil {
 		t.Skip()
 	}

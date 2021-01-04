@@ -1,14 +1,10 @@
 package models
 
 import (
-	"log"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"Ayudaap.org/pkg/database"
 	"Ayudaap.org/src/entities"
-	"gopkg.in/mgo.v2/bson"
 )
 
 //OrganizacionModel Tipo de organizacion
@@ -59,50 +55,25 @@ func (o OrganizacionModel) FindByID(ID string) (entities.Organizacion, error) {
 }
 
 //Update Actualiza un objeto en la base de datos
-func (o OrganizacionModel) Update(organizacion *entities.Organizacion) (int64, error) {
-
-	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
-	defer cancel()
+func (o OrganizacionModel) Update(organizacion entities.Organizacion) (int64, error) {
 
 	//TODO: Cambiar por codigo el usuario que lo modifica
 	organizacion.Auditoria.ModificadoPor = "Testing"
 	organizacion.Auditoria.UpdatedAt = time.Now().Unix()
 
-	res, err := col.UpdateOne(ctx, bson.M{"_id": organizacion.ID}, bson.M{"$set": organizacion})
-
+	total, err := db.Udate(organizacion.ID.Hex(), organizacion)
 	if err != nil {
 		return 0, err
 	}
-
-	return res.MatchedCount, nil
+	return total, nil
 
 }
 
 //DeleteOne Borra un proyecto por
 func (o OrganizacionModel) DeleteOne(ID string) error {
-	oID, err := primitive.ObjectIDFromHex(ID)
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	col, ctx, cancel := database.GetCollection(ORGANIZACIONCOLLECTION)
-	defer cancel()
-
-	_, err = col.DeleteOne(ctx, bson.M{"_id": oID})
-
+	err := db.DeleteOne(ID)
 	if err != nil {
 		return err
 	}
-
 	return nil
-}
-
-//getID Convierte un string en ObjectID
-func getID(ID string) (primitive.ObjectID, error) {
-	oID, err := primitive.ObjectIDFromHex(ID)
-	if err != nil {
-		return primitive.NilObjectID, err
-	}
-
-	return oID, nil
 }

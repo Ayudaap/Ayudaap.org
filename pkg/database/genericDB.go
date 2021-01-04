@@ -90,7 +90,13 @@ func (g GenericDB) Udate(ID string, registro interface{}) (int64, error) {
 	col, ctx, cancel := GetCollection(g.CollectionName)
 	defer cancel()
 
-	result, err := col.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{"$set": registro})
+	oID, err := primitive.ObjectIDFromHex(ID)
+	if err != nil {
+		log.Println(err.Error())
+		return 0, err
+	}
+
+	result, err := col.UpdateOne(ctx, bson.M{"_id": oID}, bson.M{"$set": registro})
 	if err != nil {
 		return 0, nil
 	}

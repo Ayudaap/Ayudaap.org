@@ -22,14 +22,16 @@ func GetRouter() http.Handler {
 	//apiProy Rutas para los proyectos
 	apiProy := apiRoute.PathPrefix("/proyectos").Subrouter()
 	apiProy.HandleFunc("/", api.ProyectoAPI{}.GetALlProyectos).Name("getALlProyectos").Methods("GET")
-	apiProy.HandleFunc("/{id}", api.ProyectoAPI{}.GetProyectoByID).Name("getProyecto").Methods("GET")
 	apiProy.HandleFunc("/", api.ProyectoAPI{}.CreateProyecto).Name("crearProyecto").Methods("POST")
+	apiProy.HandleFunc("/{id}", api.ProyectoAPI{}.GetProyectoByID).Name("getProyecto").Methods("GET")
+	apiProy.HandleFunc("/{id}", api.ProyectoAPI{}.GetProyectoByID).Name("getProyecto").Methods("PUT")
 
 	//apiOrg Rutas para las Organizaciones
 	apiOrg := apiRoute.PathPrefix("/organizaciones").Subrouter()
 	apiOrg.HandleFunc("/", api.OrganizacionAPI{}.GetALlorganizaciones).Name("getALlOrganizaciones").Methods("GET")
-	apiOrg.HandleFunc("/{id}", api.OrganizacionAPI{}.GetOrganizacionByID).Name("getALlOrganizaciones").Methods("GET")
 	apiOrg.HandleFunc("/", api.OrganizacionAPI{}.CreateOrganizacion).Name("crearProyecto").Methods("POST")
+	apiOrg.HandleFunc("/{id}", api.OrganizacionAPI{}.GetOrganizacionByID).Name("getALlOrganizaciones").Methods("GET")
+	apiOrg.HandleFunc("/{id}", api.OrganizacionAPI{}.UpdateOne).Name("updateOneOrganizaciones").Methods("PUT")
 
 	return r
 }

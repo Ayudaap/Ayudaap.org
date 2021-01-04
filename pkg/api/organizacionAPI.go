@@ -74,3 +74,29 @@ func (o OrganizacionAPI) CreateOrganizacion(w http.ResponseWriter, r *http.Reque
 		}
 	}
 }
+
+//UpdateOne Actualiza un proyecto
+func (o OrganizacionAPI) UpdateOne(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	defer r.Body.Close()
+
+	var organizacion entities.Organizacion
+	if err := json.NewDecoder(r.Body).Decode(&organizacion); err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+	} else {
+		if organizacion.ID.IsZero() {
+			oID, _ := primitive.ObjectIDFromHex(id)
+			organizacion.ID = oID
+		}
+
+		resultados, err := models.OrganizacionModel{}.Update(organizacion)
+		if err != nil {
+			log.Fatal(err.Error())
+			respondWithError(w, http.StatusBadRequest, "No se pudo procesar la peticion")
+		} else {
+			respondWithJSON(w, http.StatusAccepted, resultados)
+		}
+	}
+
+}
