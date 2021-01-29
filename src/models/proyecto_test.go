@@ -70,25 +70,25 @@ func TestGetAllProyecto(t *testing.T) {
 	}
 }
 
-// func TestGetOneOrganizacion(t *testing.T) {
+func TestGetOneProyecto(t *testing.T) {
 
-// 	organizaciones, err := OrganizacionModel{}.FindAll()
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+	proyecto, err := ProyectoModel{}.FindAll()
+	if err != nil {
+		t.Skip()
+	}
 
-// 	want := organizaciones[0].ID.Hex()
-// 	got, err := OrganizacionModel{}.FindByID(want)
+	want := proyecto[0].ID.Hex()
+	got, err := ProyectoModel{}.FindByID(want)
 
-// 	if err != nil {
-// 		t.Errorf("No se pudo ejecutar la consulta \n :%s", err.Error())
-// 	}
+	if err != nil {
+		t.Errorf("No se pudo ejecutar la consulta \n :%s", err.Error())
+	}
 
-// 	if got.Nombre == "" {
-// 		t.Errorf("No se logro ejecutar la consulta, want: %s got: %s", want, got.ID.Hex())
-// 	}
+	if got.Nombre == "" {
+		t.Errorf("No se logro ejecutar la consulta, want: %s got: %s", want, got.ID.Hex())
+	}
 
-// }
+}
 
 func TestDeleteProyecto(t *testing.T) {
 	proyectos, err := ProyectoModel{}.FindAll()
@@ -105,76 +105,76 @@ func TestDeleteProyecto(t *testing.T) {
 	}
 }
 
-// func TestUpdateOrganizacion(t *testing.T) {
-// 	organizaciones, err := OrganizacionModel{}.FindAll()
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+func TestUpdateProyecto(t *testing.T) {
+	proyecto, err := ProyectoModel{}.FindAll()
+	if err != nil {
+		t.Skip()
+	}
 
-// 	toUpdate := organizaciones[0]
-// 	if toUpdate.Nombre == "" {
-// 		t.Skip()
-// 	}
+	toUpdate := proyecto[0]
+	if toUpdate.Nombre == "" {
+		t.Skip()
+	}
 
-// 	toUpdate.Nombre = "Prueba 1"
-// 	toUpdate.Tipo = entities.OrganizacionNoGubernamental
+	toUpdate.Nombre = "Prueba 1"
+	toUpdate.Costo = faker.Commerce().Price()
 
-// 	modificdo, err := OrganizacionModel{}.Update(toUpdate)
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+	modificdo, err := ProyectoModel{}.Update(toUpdate)
+	if err != nil {
+		t.Skip()
+	}
 
-// 	if modificdo == 0 {
-// 		t.Errorf("No se ejecuto modificacion")
-// 	}
-// }
+	if modificdo == 0 {
+		t.Errorf("No se ejecuto modificacion")
+	}
+}
 
-// //TestUpdateOrganizacionDireccion Prueba modificar los datos de un documento envevido
-// func TestUpdateOrganizacionDireccion(t *testing.T) {
-// 	organizaciones, err := OrganizacionModel{}.FindAll()
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+//TestUpdateOrganizacionDireccion Prueba modificar los datos de un documento envevido
+func TestUpdateProyectoDireccion(t *testing.T) {
+	proyecto, err := ProyectoModel{}.FindAll()
+	if err != nil {
+		t.Skip()
+	}
 
-// 	toUpdate := organizaciones[0]
-// 	if toUpdate.Nombre == "" {
-// 		t.Skip()
-// 	}
+	toUpdate := proyecto[0]
+	if toUpdate.Nombre == "" {
+		t.Skip()
+	}
 
-// 	toUpdate.Domicilio.Calle = "Prueba Modificacion"
-// 	toUpdate.Tipo = entities.OrganizacionNoGubernamental
+	toUpdate.Banner = faker.Avatar().String()
+	toUpdate.Actividad = faker.Hacker().SaySomethingSmart()
 
-// 	modificdo, err := OrganizacionModel{}.Update(toUpdate)
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+	modificdo, err := ProyectoModel{}.Update(toUpdate)
+	if err != nil {
+		t.Skip()
+	}
 
-// 	if modificdo == 0 {
-// 		t.Errorf("No se ejecuto modificacion")
-// 	}
-// }
+	if modificdo == 0 {
+		t.Errorf("No se ejecuto modificacion")
+	}
+}
 
-// //TestUpdateOrganizacionDirectorio Prueba modificar los datos de un documento envevido
-// func TestUpdateOrganizacionDirectorio(t *testing.T) {
-// 	organizaciones, err := OrganizacionModel{}.FindAll()
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+//TestUpdateOrganizacionDirectorio Prueba modificar los datos de un documento envevido
+func TestUpdateProyectosArea(t *testing.T) {
+	proyecto, err := ProyectoModel{}.FindAll()
+	if err != nil {
+		t.Skip()
+	}
 
-// 	toUpdate := organizaciones[0]
-// 	if toUpdate.Nombre == "" {
-// 		t.Skip()
-// 	}
+	toUpdate := proyecto[0]
+	if toUpdate.Nombre == "" {
+		t.Skip()
+	}
 
-// 	toUpdate.Domicilio.Directorio[0].Alias = "Prueba de modificacion"
-// 	toUpdate.Tipo = entities.OrganizacionNoGubernamental
+	toUpdate.Area.Descripcion = faker.Commerce().Department()
+	toUpdate.Area.Nombre = faker.Commerce().ProductName()
 
-// 	modificdo, err := OrganizacionModel{}.Update(toUpdate)
-// 	if err != nil {
-// 		t.Skip()
-// 	}
+	modificdo, err := ProyectoModel{}.Update(toUpdate)
+	if err != nil {
+		t.Skip()
+	}
 
-// 	if modificdo == 0 {
-// 		t.Errorf("No se ejecuto modificacion")
-// 	}
-// }
+	if modificdo == 0 {
+		t.Errorf("No se ejecuto modificacion")
+	}
+}

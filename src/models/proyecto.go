@@ -96,8 +96,8 @@ func (p ProyectoModel) DeleteOne(ID string) error {
 	return nil
 }
 
-//Udate Actualiza un objeto
-func (p ProyectoModel) Udate(proyecto entities.Proyecto) (int64, error) {
+//Update Actualiza un objeto
+func (p ProyectoModel) Update(proyecto entities.Proyecto) (int64, error) {
 
 	col, ctx, cancel := database.GetCollection(PROYECTOSCOLLECTION)
 	defer cancel()
