@@ -1,26 +1,11 @@
 version: '3.7'
 
 services:
-  app:
-    container_name: ayudaap-api
-    build: .
-    ports: 
-      - "80:8080"
-    restart: on-failure
-    env_file:
-      - .env
-    volumes: 
-       - ayudaa-api-data:/usr/src/app
-    networks: 
-      - ayudaap-net
-    depends_on:
-      - db
-
   db:
     container_name: ayudaap-db
     image: mongo
     ports: 
-      - 27017:27017
+    - 27017:27017
     volumes: 
       - ayudaap-db-vol:/data/db
     networks: 
@@ -29,11 +14,25 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
       MONGO_INITDB_DATABASE: ${DB_INIT}
-    
+  app:
+      container_name: ayudaap-api
+      build: .
+      ports: 
+        - "80:8080"
+      restart: on-failure
+      env_file:
+        - .env
+      volumes: 
+          - ayudaa-api-data:/usr/src/app
+      networks: 
+        - ayudaap-net
+      depends_on:
+        - db
 
 networks: 
   ayudaap-net:
     driver: bridge
+    
 volumes: 
   ayudaa-api-data:
   ayudaap-db-vol:

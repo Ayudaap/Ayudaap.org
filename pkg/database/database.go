@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 	"time"
-
-	"github.com/spf13/viper"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -34,13 +33,17 @@ func GetInstance() *MongoRepository {
 // ConectarDB inicia una conexión de hacia la BD
 //TODO: Implementar consulta desde archivo de configuracion
 func conectarBD() {
-	host := viper.GetString("DB.DB_HOST")
-	port := viper.GetInt("DB.DB_PORT")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB.DB_USER")
+	pass := os.Getenv("DB.DB_PASS")
+	// host := viper.GetString("DB.DB_HOST")
+	// port := viper.GetInt("DB.DB_PORT")
 	// user := viper.GetString("DB.DB_USER")
 	// pass := viper.GetString("DB.DB_PASSWORD")
 
-	//var cadenaConexion = fmt.Sprintf("mongodb+srv://%s:%s@%s:%s", user, pass, host, port)
-	cadenaConexion := fmt.Sprintf("mongodb://%s:%d", host, port)
+	var cadenaConexion = fmt.Sprintf("mongodb+srv://%s:%s@%s:%s", user, pass, host, port)
+	// cadenaConexion := fmt.Sprintf("mongodb://%s:%d", host, port)
 	clienteOpts := options.Client().ApplyURI(cadenaConexion)
 	cliente, err := mongo.Connect(context.TODO(), clienteOpts)
 

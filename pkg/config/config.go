@@ -11,6 +11,7 @@ func Initconfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	viper.AddConfigPath("../")
+	viper.AddConfigPath("./")
 	viper.AddConfigPath("./../../")
 	viper.AutomaticEnv()
 
