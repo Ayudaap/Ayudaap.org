@@ -3,6 +3,9 @@
 # Start from golang base image
 FROM golang:alpine as builder
 
+RUN addgroup -S devopsc && adduser -S edvs -G devopsc
+USER edvs:devopsc
+
 # ENV GO111MODULE=on
 
 # Add Maintainer info
